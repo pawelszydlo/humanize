@@ -23,4 +23,15 @@ var lang_pl = languageProvider{
 	},
 	timeFuture: "za %s",
 	timePast:   "%s temu",
+	timeUnits: timeUnits{
+		"sekund": 1,
+		"minut":  Minute,
+		"godzin": Hour,
+		"dzie":   Day,
+		"dni":    Day,
+		"ty":     Week,
+		"miesi":  Month,
+		"rok":    Year,
+		"lat":    Year,
+	},
 }

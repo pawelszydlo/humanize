@@ -18,4 +18,13 @@ var lang_en = languageProvider{
 	},
 	timeFuture: "in %s",
 	timePast:   "%s ago",
+	timeUnits: timeUnits{
+		"second": 1,
+		"minute": Minute,
+		"hour":   Hour,
+		"day":    Day,
+		"week":   Week,
+		"month":  Month,
+		"year":   Year,
+	},
 }
