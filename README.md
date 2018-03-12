@@ -5,8 +5,8 @@ Human readable formatting and input parsing for Go.
 * Time
 
 ### Supported languages
-* english
-* polish
+* English
+* Polish
 
 ### Example usage
 
