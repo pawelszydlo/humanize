@@ -1,7 +1,7 @@
 # humanize [![GoDoc](https://godoc.org/github.com/pawelszydlo/humanize?status.svg)](https://godoc.org/github.com/pawelszydlo/humanize)
 Human readable formatting and input parsing for Go. 
 
-Supports only a simple \<duration> \<unit> format.
+Supports only a simple _\<duration> \<unit>_ format.
 
 ### Supported values
 * Time
