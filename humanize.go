@@ -1,5 +1,4 @@
-// Package humanize provides methods for formatting and parsing values
-// in human readable form.
+// Package humanize provides methods for formatting and parsing values in human readable form.
 package humanize
 
 import (
