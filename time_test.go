@@ -44,6 +44,9 @@ func TestHumanizer_GetDuration(t *testing.T) {
 		"5 weeks":    time.Duration(5 * Week * time.Second),
 		"3.3 months": time.Duration(3.3 * Month * time.Second),
 		"10 years":   time.Duration(10 * Year * time.Second),
+		"2 days and 5 hours":    time.Duration(2 * Day * time.Second + 5 * Hour * time.Second),
+		"2 years, 19 months": time.Duration(2 * Year * time.Second + 19 * Month * time.Second),
+		"2 days and then 2 days":   time.Duration(4* Day * time.Second),
 	}
 
 	for input, expected := range cases {

@@ -1,16 +1,14 @@
 # humanize [![GoDoc](https://godoc.org/github.com/pawelszydlo/humanize?status.svg)](https://godoc.org/github.com/pawelszydlo/humanize)
 Human readable formatting and input parsing for Go. 
 
-Supports only a simple _\<duration> \<unit>_ format.
-
-### Supported values
+#### Supported values
 * Time
 
-### Supported languages
+#### Supported languages
 * English
 * Polish
 
-### Example usage
+#### Example usage
 
 ```golang
 package main
@@ -23,6 +21,10 @@ import (
 
 func main() {
     humanizer, _ := humanize.New("en")
+    
+    duration, _ := humanizer.GetDuration("2 days, 5 hours and 40 seconds")
+    fmt.Println(duration)
+    // Prints: 53h0m40s
 
     firstDate := time.Date(2017, 3, 21, 0, 0, 0, 0, time.UTC)
     secondDate := time.Date(2017, 6, 21, 0, 0, 0, 0, time.UTC)
@@ -32,9 +34,5 @@ func main() {
 
     fmt.Println(humanizer.TimeDiff(secondDate, firstDate))
     // Prints: 3 months ago
-
-    duration, _ := humanizer.GetDuration("3.5 days")
-    fmt.Println(duration)
-    // Prints: 84h0m0s 
 }
 ```

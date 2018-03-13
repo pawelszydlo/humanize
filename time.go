@@ -63,21 +63,27 @@ func (humanizer *Humanizer) TimeDiff(startDate, endDate time.Time) string {
 
 // GetDuration will return time duration as parsed from input string.
 func (humanizer *Humanizer) GetDuration(input string) (time.Duration, error) {
-	matched := humanizer.timeInputRe.FindStringSubmatch(input)
-	if len(matched) != 4 {
+	allMatched := humanizer.timeInputRe.FindAllStringSubmatch(input, -1)
+	if len(allMatched) == 0 {
 		return time.Duration(0), errors.New(fmt.Sprintf("Cannot parse '%s'.", input))
 	}
-	// 0 - full match, 1 - number, 2 - decimal, 3 - unit
-	if matched[2] == "" { // Decimal component is empty.
-		matched[2] = "0"
-	}
-	// Parse first two groups into a float.
-	number, err := strconv.ParseFloat(matched[1]+"."+matched[2], 64)
-	if err != nil {
-		return time.Duration(0), err
-	}
-	// Get the value of the unit in seconds.
-	seconds, _ := humanizer.provider.timeUnits[matched[3]]
 
-	return time.Duration(int64(number * float64(seconds) * float64(time.Second))), nil
+	totalDuration := time.Duration(0)
+	for _, matched := range allMatched {
+		// 0 - full match, 1 - number, 2 - decimal, 3 - unit
+		if matched[2] == "" { // Decimal component is empty.
+			matched[2] = "0"
+		}
+		// Parse first two groups into a float.
+		number, err := strconv.ParseFloat(matched[1]+"."+matched[2], 64)
+		if err != nil {
+			return time.Duration(0), err
+		}
+		// Get the value of the unit in seconds.
+		seconds, _ := humanizer.provider.timeUnits[matched[3]]
+		// Parser will simply sum up all the found durations.
+		totalDuration += time.Duration(int64(number * float64(seconds) * float64(time.Second)))
+	}
+
+	return totalDuration, nil
 }
