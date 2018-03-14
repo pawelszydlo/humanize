@@ -23,7 +23,7 @@ func main() {
 	humanizer, _ := humanize.New("en")
 
 	// Decode human duration input.
-	duration, _ := humanizer.GetDuration("2 days, 5 hours and 40 seconds")
+	duration, _ := humanizer.ParseDuration("2 days, 5 hours and 40 seconds")
 	fmt.Println(duration) 
 	// Prints: 53h0m40s
 

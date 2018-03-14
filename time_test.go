@@ -57,7 +57,7 @@ func TestHumanizer_TimeDiff_Precise(t *testing.T) {
 	}
 }
 
-func TestHumanizer_GetDuration(t *testing.T) {
+func TestHumanizer_ParseDuration(t *testing.T) {
 	humanizer, err := New("en")
 	if err != nil {
 		t.Errorf("Humanizer creation failed with error: %s", err)
@@ -75,7 +75,7 @@ func TestHumanizer_GetDuration(t *testing.T) {
 	}
 
 	for input, expected := range cases {
-		humanized, err := humanizer.GetDuration(input)
+		humanized, err := humanizer.ParseDuration(input)
 		if err != nil {
 			t.Errorf("Humanization failed: %s", err)
 		}
@@ -85,12 +85,12 @@ func TestHumanizer_GetDuration(t *testing.T) {
 	}
 }
 
-func TestHumanizer_GetDuration_Incorrect(t *testing.T) {
+func TestHumanizer_ParseDuration_Incorrect(t *testing.T) {
 	humanizer, err := New("en")
 	if err != nil {
 		t.Errorf("Humanizer creation failed with error: %s", err)
 	}
-	_, err = humanizer.GetDuration("wrong duration")
+	_, err = humanizer.ParseDuration("wrong duration")
 	if err == nil {
 		t.Error("Humanization succeeded where it should have failed.")
 	}

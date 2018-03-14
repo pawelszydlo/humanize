@@ -142,8 +142,8 @@ func (humanizer *Humanizer) TimeDiff(startDate, endDate time.Time, precise bool)
 	}
 }
 
-// GetDuration will return time duration as parsed from input string.
-func (humanizer *Humanizer) GetDuration(input string) (time.Duration, error) {
+// ParseDuration will return time duration as parsed from input string.
+func (humanizer *Humanizer) ParseDuration(input string) (time.Duration, error) {
 	allMatched := humanizer.timeInputRe.FindAllStringSubmatch(input, -1)
 	if len(allMatched) == 0 {
 		return time.Duration(0), errors.New(fmt.Sprintf("Cannot parse '%s'.", input))
