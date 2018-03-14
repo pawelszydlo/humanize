@@ -36,6 +36,6 @@ func main() {
 
 	// Precise mode.
 	fmt.Println(humanizer.TimeDiff(secondDate, firstDate, true))
-	// Prints: 3 months, 1 day, 11 hours, 29 minutes and 45 seconds ago
+    // Prints: 3 months, 1 day, 11 hours, 29 minutes and 45 seconds ago
 }
 ```
