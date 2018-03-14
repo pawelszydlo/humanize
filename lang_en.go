@@ -1,30 +1,49 @@
 package humanize
 
 var lang_en = languageProvider{
-	timeRanges: []timeRange{
-		{60, "a moment", 1},
-		{2 * Minute, "1 minute", 1},
-		{Hour, "%d minutes", Minute},
-		{2 * Hour, "1 hour", 1},
-		{Day, "%d hours", Hour},
-		{2 * Day, "1 day", 1},
-		{Week, "%d days", Day},
-		{2 * Week, "1 week", 1},
-		{Month, "%d weeks", Week},
-		{2 * Month, "1 month", 1},
-		{Year, "%d months", Month},
-		{18 * Month, "1 year", 1},
-		{LongTime, "%d years", Year},
-	},
-	timeFuture: "in %s",
-	timePast:   "%s ago",
-	timeUnits: timeUnits{
-		"second": 1,
-		"minute": Minute,
-		"hour":   Hour,
-		"day":    Day,
-		"week":   Week,
-		"month":  Month,
-		"year":   Year,
+	times: times{
+		ranges: []timeRanges{
+			{Minute, 1, []timeRange{
+				{2, "1 second"},
+				{60, "%d seconds"},
+			}},
+			{Hour, Minute, []timeRange{
+				{2 * Minute, "1 minute"},
+				{Hour, "%d minutes"},
+			}},
+			{Day, Hour, []timeRange{
+				{2 * Hour, "1 hour"},
+				{Day, "%d hours"},
+			}},
+			{Week, Day, []timeRange{
+				{2 * Day, "1 day"},
+				{Week, "%d days"},
+			}},
+			{Month, Week, []timeRange{
+				{2 * Week, "1 week"},
+				{Month, "%d weeks"},
+			}},
+			{Year, Month, []timeRange{
+				{2 * Month, "1 month"},
+				{Year, "%d months"},
+			}},
+			{LongTime, Year, []timeRange{
+				{2 * Year, "1 year"},
+				{LongTime, "%d years"},
+			}},
+		},
+		future:       "in %s",
+		past:         "%s ago",
+		now:          "now",
+		remainderSep: "and",
+		units: timeUnits{
+			"second": 1,
+			"minute": Minute,
+			"hour":   Hour,
+			"day":    Day,
+			"week":   Week,
+			"month":  Month,
+			"year":   Year,
+		},
 	},
 }

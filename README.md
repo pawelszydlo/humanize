@@ -12,27 +12,30 @@ Human readable formatting and input parsing for Go.
 
 ```golang
 package main
-  
+
 import (
-    "fmt"
-    "github.com/pawelszydlo/humanize"
-    "time"
+	"fmt"
+	"github.com/pawelszydlo/humanize"
+	"time"
 )
 
 func main() {
-    humanizer, _ := humanize.New("en")
-    
-    duration, _ := humanizer.GetDuration("2 days, 5 hours and 40 seconds")
-    fmt.Println(duration)
-    // Prints: 53h0m40s
+	humanizer, _ := humanize.New("en")
 
-    firstDate := time.Date(2017, 3, 21, 0, 0, 0, 0, time.UTC)
-    secondDate := time.Date(2017, 6, 21, 0, 0, 0, 0, time.UTC)
+	// Decode human duration input.
+	duration, _ := humanizer.GetDuration("2 days, 5 hours and 40 seconds")
+	fmt.Println(duration) 
+	// Prints: 53h0m40s
 
-    fmt.Println(humanizer.TimeDiff(firstDate, secondDate))
+	firstDate := time.Date(2017, 3, 21, 12, 30, 15, 0, time.UTC)
+	secondDate := time.Date(2017, 6, 21, 0, 0, 0, 0, time.UTC)
+
+	// Approximate mode.
+	fmt.Println(humanizer.TimeDiff(firstDate, secondDate, false))
     // Prints: in 3 months
 
-    fmt.Println(humanizer.TimeDiff(secondDate, firstDate))
-    // Prints: 3 months ago
+	// Precise mode.
+	fmt.Println(humanizer.TimeDiff(secondDate, firstDate, true))
+	// Prints: 3 months, 1 day, 11 hours, 29 minutes and 45 seconds ago
 }
 ```
