@@ -2,8 +2,8 @@
 Human readable formatting and input parsing for Go. 
 
 #### Supported operations
-* Time humanization and parsing
-* Metric prefixes
+* [Time humanization](#humanized-time-difference) and [parsing](#decoding-duration-from-human-input)
+* [Metric prefixes](#metric-prefixes)
 
 #### Supported languages
 * English
