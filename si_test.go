@@ -17,12 +17,16 @@ func TestHumanizer_Prefix(t *testing.T) {
 		"5.3µ": humanizer.Prefix(0.00000534, 1, 100, true),
 		"2345": humanizer.Prefix(2345, 1, 10000, true),
 		"1Y": humanizer.Prefix(1000000000001000000000000, 1, 1000, true),
-
+		// Too low threshold.
+		"1": humanizer.Prefix(1, 1, 1, true),
+		// Fast.
 		"174.5k": humanizer.PrefixFast(174512),
 		"28M": humanizer.PrefixFast(28000000),
 		"5.1m": humanizer.PrefixFast(0.005123),
 		"175": humanizer.PrefixFast(175),
 		"1k": humanizer.PrefixFast(1024),
+		// Integer.
+		"2k": humanizer.PrefixFastInt(2000),
 	}
 
 	for expected, humanized := range cases {
