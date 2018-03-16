@@ -15,13 +15,13 @@ Init with:
 ```golang
 humanizer, err := humanize.New("en")
 ```
-Decoding duration from human input:
+##### Decoding duration from human input:
 ```golang
 duration, _ := humanizer.ParseDuration("2 days, 5 hours and 40 seconds")
 fmt.Println(duration) 
 // Prints: 53h0m40s
 ```
-Humanized time difference:
+##### Humanized time difference:
 ```golang
 firstDate := time.Date(2017, 3, 21, 12, 30, 15, 0, time.UTC)
 secondDate := time.Date(2017, 6, 21, 0, 0, 0, 0, time.UTC)
@@ -34,7 +34,7 @@ fmt.Println(humanizer.TimeDiff(firstDate, secondDate, false))
 fmt.Println(humanizer.TimeDiff(secondDate, firstDate, true))
 // Prints: 3 months, 1 day, 11 hours, 29 minutes and 45 seconds ago
 ```
-Metric prefixes:
+##### Metric prefixes:
 ```golang
 // Quick usage.
 fmt.Println(humanizer.PrefixFast(174512))
