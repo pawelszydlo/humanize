@@ -1,5 +1,7 @@
 package humanize
 
+// Time values humanization functions.
+
 import (
 	"errors"
 	"fmt"
