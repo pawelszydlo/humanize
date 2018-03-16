@@ -43,7 +43,7 @@ func (humanizer *Humanizer) PrefixFastInt(value int64) string {
 }
 
 // PrefixFast is a convenience function for easy prefixing.
-// Precision is 1 decimal place. Will not prefix values in range 0.01 - 100 and will append only the short prefix.
+// Precision is 1 decimal place. Will not prefix values in range 0.01 - 1000 and will append only the short prefix.
 func (humanizer *Humanizer) PrefixFast(value float64) string {
 	return humanizer.Prefix(value, 1, 1000, true)
 }
