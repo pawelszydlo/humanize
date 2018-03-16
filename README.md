@@ -1,17 +1,17 @@
 # humanize [![GoDoc](https://godoc.org/github.com/pawelszydlo/humanize?status.svg)](https://godoc.org/github.com/pawelszydlo/humanize) [![Build Status](https://travis-ci.org/pawelszydlo/humanize.svg?branch=master)](https://travis-ci.org/pawelszydlo/humanize) [![codecov](https://codecov.io/gh/pawelszydlo/humanize/branch/master/graph/badge.svg)](https://codecov.io/gh/pawelszydlo/humanize)
 Human readable formatting and input parsing for Go. 
 
-### Supported languages
+## Supported languages
 * English
 * Polish
 
-### Supported operations
+## Supported operations
 
 Init with:
 ```golang
 humanizer, err := humanize.New("en")
 ```
-#### Time
+### Time
 Decoding duration from human input:
 ```golang
 duration, _ := humanizer.ParseDuration("2 days, 5 hours and 40 seconds")
@@ -31,7 +31,7 @@ fmt.Println(humanizer.TimeDiff(firstDate, secondDate, false))
 fmt.Println(humanizer.TimeDiff(secondDate, firstDate, true))
 // Prints: 3 months, 1 day, 11 hours, 29 minutes and 45 seconds ago
 ```
-#### Metric prefixes
+### Metric prefixes
 Number conversion:
 ```golang
 // Quick usage.
