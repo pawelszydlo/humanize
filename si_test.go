@@ -1,8 +1,8 @@
 package humanize
 
 import (
-	"testing"
 	"math"
+	"testing"
 )
 
 // almostEqual does float comparison ignoring their least significant bit.
@@ -17,21 +17,21 @@ func TestHumanizer_Prefix(t *testing.T) {
 		t.Errorf("Humanizer creation failed with error: %s", err)
 	}
 
-	cases := map[string]string {
-		"2.9k": humanizer.Prefix(2854, 1, 1000, true),
+	cases := map[string]string{
+		"2.9k":    humanizer.Prefix(2854, 1, 1000, true),
 		"23 mega": humanizer.Prefix(22843853, 0, 1000, false),
-		"1.44M": humanizer.Prefix(1440000, 2, 1000, true),
-		"5.3µ": humanizer.Prefix(0.00000534, 1, 100, true),
-		"2345": humanizer.Prefix(2345, 1, 10000, true),
-		"1Y": humanizer.Prefix(1000000000001000000000000, 1, 1000, true),
+		"1.44M":   humanizer.Prefix(1440000, 2, 1000, true),
+		"5.3µ":    humanizer.Prefix(0.00000534, 1, 100, true),
+		"2345":    humanizer.Prefix(2345, 1, 10000, true),
+		"1Y":      humanizer.Prefix(1000000000001000000000000, 1, 1000, true),
 		// Too low threshold.
 		"1": humanizer.Prefix(1, 1, 1, true),
 		// Fast.
 		"174.5k": humanizer.PrefixFast(174512),
-		"28M": humanizer.PrefixFast(28000000),
-		"5.1m": humanizer.PrefixFast(0.005123),
-		"175": humanizer.PrefixFast(175),
-		"1k": humanizer.PrefixFast(1024),
+		"28M":    humanizer.PrefixFast(28000000),
+		"5.1m":   humanizer.PrefixFast(0.005123),
+		"175":    humanizer.PrefixFast(175),
+		"1k":     humanizer.PrefixFast(1024),
 		// Integer.
 		"2k": humanizer.PrefixFastInt(2000),
 	}
@@ -49,15 +49,15 @@ func TestHumanizer_ParsePrefix(t *testing.T) {
 		t.Errorf("Humanizer creation failed with error: %s", err)
 	}
 
-	cases := map[string]float64 {
-		"2.9k": 2900,
-		"13": 13,
-		"0.5": 0.5,
+	cases := map[string]float64{
+		"2.9k":       2900,
+		"13":         13,
+		"0.5":        0.5,
 		"13.5 kilo ": 13500,
-		"20m": 0.020,
-		" 20M ": 20000000,
-		"5yotta": 5000000000000000000000000,
-		"15 µ": 0.000015,
+		"20m":        0.020,
+		" 20M ":      20000000,
+		"5yotta":     5000000000000000000000000,
+		"15 µ":       0.000015,
 	}
 
 	for input, expected := range cases {

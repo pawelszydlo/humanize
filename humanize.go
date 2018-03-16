@@ -20,8 +20,8 @@ type languageProvider struct {
 
 // Humanizer is the main struct that provides the public methods.
 type Humanizer struct {
-	provider    languageProvider
-	timeInputRe *regexp.Regexp
+	provider      languageProvider
+	timeInputRe   *regexp.Regexp
 	metricInputRe *regexp.Regexp
 }
 

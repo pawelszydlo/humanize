@@ -1,12 +1,12 @@
 package humanize
 
 import (
+	"errors"
+	"fmt"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
-	"regexp"
-	"fmt"
-	"errors"
 )
 
 // SI prefixing functions.
@@ -97,7 +97,7 @@ func (humanizer *Humanizer) Prefix(value float64, decimals int, threshold int64,
 		strconv.FormatFloat(value/siPrefixes[i].multiplier, 'f', decimals, 64))
 
 	if short {
-		return  convertedValue + siPrefixes[i].short
+		return convertedValue + siPrefixes[i].short
 	} else {
 		return convertedValue + " " + siPrefixes[i].long
 	}
