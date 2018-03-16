@@ -76,10 +76,10 @@ func (humanizer *Humanizer) trimZeroes(value string) string {
 
 // Prefix appends a SI prefix to the value and converts it accordingly.
 // Arguments:
-//	value - value to be converted
+//  value - value to be converted
 //  decimals - decimal precision for the converted value
-//	threshold - upper bound of the range to be ignored. Lower bound is 1/threshold.
-//	short - whether to use short or long prefix.
+//  threshold - upper bound of the range to be ignored. Lower bound is 1/threshold.
+//  short - whether to use short or long prefix.
 func (humanizer *Humanizer) Prefix(value float64, decimals int, threshold int64, short bool) string {
 	if threshold < 10 {
 		threshold = 10
