@@ -4,6 +4,9 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"regexp"
+	"fmt"
+	"errors"
 )
 
 // SI prefixing functions.
@@ -14,6 +17,7 @@ type siPrefix struct {
 	long       string
 }
 
+// TODO: using float64 here leads to errors on the edges of the spectrum.
 var siPrefixes = []siPrefix{
 	{1000000000000000000000000, "Y", "yotta"},
 	{1000000000000000000000, "Z", "zetta"},
@@ -35,6 +39,19 @@ var siPrefixes = []siPrefix{
 	{0.000000000000000001, "a", "atto"},
 	{0.000000000000000000001, "z", "zepto"},
 	{0.000000000000000000000001, "y", "yocto"},
+}
+
+// buildMetricInputRe will build a regular expression to match all possible metric prefix inputs.
+func (humanizer *Humanizer) buildMetricInputRe() {
+	// Get all possible suffixes.
+	suffixes := make([]string, 0, len(siPrefixes))
+	for _, suffix := range siPrefixes {
+		suffixes = append(suffixes, suffix.long)
+		suffixes = append(suffixes, suffix.short)
+	}
+	// Regexp will match: number, optional coma or dot, optional second number, optional space, optional suffix
+	humanizer.metricInputRe = regexp.MustCompile(
+		`([0-9]+)[.,]?([0-9]*?) ?(` + strings.Join(suffixes, "|") + `)?$`)
 }
 
 // PrefixFastInt like PrefixFast but accepting integer values.
@@ -84,4 +101,35 @@ func (humanizer *Humanizer) Prefix(value float64, decimals int, threshold int64,
 	} else {
 		return convertedValue + " " + siPrefixes[i].long
 	}
+}
+
+// ParsePrefix will return a number as parsed from input string.
+func (humanizer *Humanizer) ParsePrefix(input string) (float64, error) {
+	matched := humanizer.metricInputRe.FindStringSubmatch(strings.TrimSpace(input))
+	if len(matched) != 4 {
+		return 0, errors.New(fmt.Sprintf("Cannot parse '%s'.", input))
+	}
+
+	// 0 - full match, 1 - number, 2 - decimal, 3 - suffix
+	if matched[2] == "" { // Decimal component is empty.
+		matched[2] = "0"
+	}
+	// Parse first two groups into a float.
+	number, err := strconv.ParseFloat(matched[1]+"."+matched[2], 64)
+	if err != nil {
+		return 0, err
+	}
+	// No suffix, no multiplication.
+	if matched[3] == "" {
+		return number, nil
+	}
+	// Get the multiplier for the suffix.
+	for _, prefix := range siPrefixes {
+		if prefix.short == matched[3] || prefix.long == matched[3] {
+			return number * prefix.multiplier, nil
+		}
+	}
+
+	// No prefix was found at all.
+	return 0, errors.New(fmt.Sprintf("Can't match metric prefix for '%s'.", matched[3]))
 }

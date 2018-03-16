@@ -22,6 +22,7 @@ type languageProvider struct {
 type Humanizer struct {
 	provider    languageProvider
 	timeInputRe *regexp.Regexp
+	metricInputRe *regexp.Regexp
 }
 
 // New creates a new humanizer for a given language.
@@ -31,6 +32,7 @@ func New(language string) (*Humanizer, error) {
 			provider: provider,
 		}
 		humanizer.buildTimeInputRe()
+		humanizer.buildMetricInputRe()
 		return humanizer, nil
 	} else {
 		return nil, errors.New(fmt.Sprintf("Language not supported: %s", language))
