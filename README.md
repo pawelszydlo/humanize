@@ -1,15 +1,15 @@
 # humanize [![GoDoc](https://godoc.org/github.com/pawelszydlo/humanize?status.svg)](https://godoc.org/github.com/pawelszydlo/humanize)
 Human readable formatting and input parsing for Go. 
 
-#### Supported operations
+### Supported operations
 * [Time humanization](#humanized-time-difference) and [parsing](#decoding-duration-from-human-input)
 * [Metric prefixes](#metric-prefixes)
 
-#### Supported languages
+### Supported languages
 * English
 * Polish
 
-#### Example usage
+### Example usage
 
 Init with:
 ```golang
