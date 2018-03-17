@@ -5,6 +5,44 @@ import (
 	"time"
 )
 
+func TestHumanizer_TimeDiffNow(t *testing.T) {
+	humanizer, err := New("en")
+	if err != nil {
+		t.Errorf("Humanizer creation failed with error: %s", err)
+	}
+	cases := map[time.Duration]string{
+		time.Duration(0):                           "now",
+		time.Duration(1 * time.Second):             "in 1 second",
+		time.Duration(15 * time.Minute):            "in 15 minutes",
+		time.Duration(2*time.Hour + 5*time.Minute): "in 2 hours",
+		time.Duration(3 * 24 * time.Hour):          "in 3 days",
+		time.Duration(15 * 24 * time.Hour):         "in 2 weeks",
+		time.Duration(40 * 24 * time.Hour):         "in 1 month",
+	}
+
+	for duration, expected := range cases {
+		humanized := humanizer.TimeDiffNow(time.Now().Add(duration), false)
+		if humanized != expected {
+			t.Errorf("Expected '%s', got '%s'.", expected, humanized)
+		}
+	}
+}
+
+func TestHumanizer_TimeDiffNow_TZ(t *testing.T) {
+	humanizer, err := New("en")
+	if err != nil {
+		t.Errorf("Humanizer creation failed with error: %s", err)
+	}
+	// Set arbitrary location.
+	loc, _ := time.LoadLocation("Asia/Shanghai")
+	date := time.Now().Add(time.Duration(5 * time.Minute)).In(loc)
+	// Make sure that TimeDiffNow is TZ agnostic.
+	humanized := humanizer.TimeDiffNow(date, false)
+	if humanized != "in 5 minutes" {
+		t.Errorf("Expected 'in 5 minutes', got '%s'.", humanized)
+	}
+}
+
 func TestHumanizer_TimeDiff_Imprecise(t *testing.T) {
 	humanizer, err := New("en")
 	if err != nil {

@@ -39,8 +39,8 @@ fmt.Println(humanizer.PrefixFast(174512))
 // Prints: 174.5k
 
 // Controlled usage.
-fmt.Println(humanizer.Prefix(1440000, 2, 1000, true))
-// Prints: 1.44M
+fmt.Println(humanizer.Prefix(1440000, 2, 1000, false))
+// Prints: 1.44 mega
 ```
 Value parsing:
 ```golang
