@@ -12,6 +12,7 @@ Init with:
 humanizer, err := humanize.New("en")
 ```
 ### Time
+
 Decoding duration from human input:
 ```golang
 duration, _ := humanizer.ParseDuration("2 days, 5 hours and 40 seconds")
@@ -32,6 +33,13 @@ fmt.Println(humanizer.TimeDiff(secondDate, firstDate, true))
 // Prints: 3 months, 1 day, 11 hours, 29 minutes and 45 seconds ago
 ```
 ### Metric prefixes
+
+Decoding value from human input:
+```golang
+value, _ := humanizer.ParsePrefix("1.5k")
+fmt.Println(value)
+// Prints: 1500
+```
 Number conversion:
 ```golang
 // Quick usage.
@@ -41,10 +49,4 @@ fmt.Println(humanizer.PrefixFast(174512))
 // Controlled usage.
 fmt.Println(humanizer.Prefix(1440000, 2, 1000, false))
 // Prints: 1.44 mega
-```
-Value parsing:
-```golang
-value, _ := humanizer.ParsePrefix("1.5k")
-fmt.Println(value)
-// Prints: 1500
 ```
