@@ -7,17 +7,6 @@ import (
 	"regexp"
 )
 
-// List all the language providers here.
-var languages = map[string]languageProvider{
-	"pl": lang_pl,
-	"en": lang_en,
-}
-
-// languageProvider is a struct defining all the needed language elements.
-type languageProvider struct {
-	times times
-}
-
 // Humanizer is the main struct that provides the public methods.
 type Humanizer struct {
 	provider      languageProvider

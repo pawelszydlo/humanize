@@ -12,6 +12,7 @@ import (
 	"time"
 )
 
+// Time constants.
 const (
 	Second   = 1
 	Minute   = 60
@@ -22,34 +23,6 @@ const (
 	Year     = 12 * Month
 	LongTime = 35 * Year
 )
-
-type times struct {
-	// Time ranges to humanize time.
-	ranges []timeRanges
-	// String for formatting time in the future.
-	future string
-	// String for formatting time in the past.
-	past string
-	// String to humanize now.
-	now string
-	// Remainder separator
-	remainderSep string
-	// Unit values for matching the input. Partial matches are ok.
-	units timeUnits
-}
-
-type timeUnits map[string]int64
-
-type timeRanges struct {
-	upperLimit int64
-	divideBy   int64
-	ranges     []timeRange
-}
-
-type timeRange struct {
-	upperLimit int64
-	format     string
-}
 
 // buildTimeInputRe will build a regular expression to match all possible time inputs.
 func (humanizer *Humanizer) buildTimeInputRe() {
