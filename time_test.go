@@ -133,3 +133,24 @@ func TestHumanizer_ParseDuration_Incorrect(t *testing.T) {
 		t.Error("Humanization succeeded where it should have failed.")
 	}
 }
+
+func TestHumanizer_SecondsToTimeString(t *testing.T) {
+	humanizer, err := New("en")
+	if err != nil {
+		t.Errorf("Humanizer creation failed with error: %s", err)
+	}
+	cases := map[int64]string{
+		5:              "00:05",
+		67:             "01:07",
+		127:            "02:07",
+		0:              "00:00",
+		9999:           "2:46:39",
+	}
+
+	for input, expected := range cases {
+		humanized := humanizer.SecondsToTimeString(input)
+		if humanized != expected {
+			t.Errorf("Expected '%s', got '%s'.", expected, humanized)
+		}
+	}
+}

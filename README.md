@@ -32,6 +32,11 @@ fmt.Println(humanizer.TimeDiff(firstDate, secondDate, false))
 fmt.Println(humanizer.TimeDiff(secondDate, firstDate, true))
 // Prints: 3 months, 1 day, 11 hours, 29 minutes and 45 seconds ago
 ```
+Pretty print timestamps (seconds only):
+```golang
+fmt.Println(humanizer.SecondsToTimeString(67))
+// Prints: 01:07
+```
 ### Metric prefixes
 
 Decoding value from human input:

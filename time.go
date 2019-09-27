@@ -143,3 +143,17 @@ func (humanizer *Humanizer) ParseDuration(input string) (time.Duration, error) {
 
 	return totalDuration, nil
 }
+
+// SecondsToTimeString converts the time in seconds into a human readable timestamp.
+// eg.: 76 -> 01:16, 3620 -> 1:00:20
+func (humanizer *Humanizer) SecondsToTimeString(duration int64) string {
+	h := duration / 3600
+	duration -= h * 3600
+	m := duration / 60
+	duration -= m * 60
+	s := duration
+	if h > 0 {
+		return fmt.Sprintf("%d:%02d:%02d", h, m, s)
+	}
+	return fmt.Sprintf("%02d:%02d", m, s)
+}
