@@ -2,7 +2,6 @@
 Human readable formatting and input parsing for Go with l18n support.
 
 ### Features
-* Based partially on golang.org/x/text/message, hence it's locale aware.
 * Supports varying numerals if language calls for it, e.g.:
 ```
 2 godziny
