@@ -104,7 +104,7 @@ func (humanizer *Humanizer) TimeDiffNow(date time.Time, precise bool) string {
 // TimeDiff will return the humanized time difference between the given dates.
 // Precise setting determines whether a rough approximation or exact description should be returned, e.g.:
 //   precise=false -> "3 months"
-//   precise=true  -> "2 months, 1 week and 3 days"
+//   precise=true  -> "2 months and 10 days"
 //
 func (humanizer *Humanizer) TimeDiff(startDate, endDate time.Time, precise bool) string {
 	diff := endDate.Unix() - startDate.Unix()
@@ -154,8 +154,9 @@ func (humanizer *Humanizer) ParseDuration(input string) (time.Duration, error) {
 	return totalDuration, nil
 }
 
-// SecondsToTimeString converts the time in seconds into a human readable timestamp.
-// eg.: 76 -> 01:16, 3620 -> 1:00:20
+// SecondsToTimeString converts the time in seconds into a human readable timestamp, eg.:
+// 	 76 -> 01:16
+// 	 3620 -> 1:00:20
 func (humanizer *Humanizer) SecondsToTimeString(duration int64) string {
 	h := duration / 3600
 	duration -= h * 3600
