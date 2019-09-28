@@ -18,6 +18,7 @@ type siPrefix struct {
 }
 
 // TODO: using float64 here leads to errors on the edges of the spectrum.
+// TODO: implement bit based units (kibi etc.)
 var siPrefixes = []siPrefix{
 	{1000000000000000000000000, "Y", "yotta"},
 	{1000000000000000000000, "Z", "zetta"},
