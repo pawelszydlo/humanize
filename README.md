@@ -1,17 +1,25 @@
 # humanize [![GoDoc](https://godoc.org/github.com/pawelszydlo/humanize?status.svg)](https://godoc.org/github.com/pawelszydlo/humanize) [![Build Status](https://travis-ci.org/pawelszydlo/humanize.svg?branch=master)](https://travis-ci.org/pawelszydlo/humanize) [![codecov](https://codecov.io/gh/pawelszydlo/humanize/branch/master/graph/badge.svg)](https://codecov.io/gh/pawelszydlo/humanize)
 Human readable formatting and input parsing for Go with l18n support.
 
-## Supported languages
+### Features
+* Supports varying numerals if language calls for it, e.g.:
+```
+2 godziny
+5 godzin
+```
+* Easily extensible with new languages.
+
+### Supported languages
 * English
 * Polish
 
-## Supported operations
+### Supported operations
 
 Init with:
 ```golang
 humanizer, err := humanize.New("en")
 ```
-### Time
+#### Time
 
 Decoding duration from human input:
 ```golang
@@ -37,7 +45,7 @@ Pretty print timestamps (seconds only):
 fmt.Println(humanizer.SecondsToTimeString(67))
 // Prints: 01:07
 ```
-### Metric prefixes
+#### Metric prefixes
 
 Decoding value from human input:
 ```golang

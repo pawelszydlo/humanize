@@ -152,7 +152,7 @@ func (humanizer *Humanizer) ParseDuration(input string) (time.Duration, error) {
 		}
 		// Parse first two groups into a float.
 		number, err := strconv.ParseFloat(matched[1]+"."+matched[2], 64)
-		if err != nil {
+		if err != nil { // This can only fail if the regexp is wrong and allows non numbers.
 			return time.Duration(0), err
 		}
 		// Get the value of the unit in seconds.
