@@ -59,10 +59,6 @@ func (humanizer *Humanizer) humanizeDuration(seconds int64, precise bool) string
 		unitRanges := humanizer.provider.times.ranges[rangeIndex]
 		actualTime := secondsLeft / unitRanges.divideBy // Integer division!
 
-		if actualTime == 0 {
-
-		}
-
 		// Subtract the time span covered by this part.
 		secondsLeft -= actualTime * unitRanges.divideBy
 		// TODO: smarter imprecise mode.
@@ -85,13 +81,7 @@ func (humanizer *Humanizer) humanizeDuration(seconds int64, precise bool) string
 		})
 		timeRange := unitRanges.ranges[unitIndex]
 
-		// If range has a placeholder for a number, insert it.
-		if strings.Contains(timeRange.format, "%d") {
-			humanized = append(humanized, fmt.Sprintf(timeRange.format, actualTime))
-		} else {
-			humanized = append(humanized, timeRange.format)
-		}
-
+		humanized = append(humanized, fmt.Sprintf(timeRange.format, actualTime))
 	}
 
 	if len(humanized) == 1 {
