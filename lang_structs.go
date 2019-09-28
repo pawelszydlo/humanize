@@ -26,19 +26,24 @@ type times struct {
 	// Remainder separator
 	remainderSep string
 	// Unit values for matching the input. Partial matches are ok.
-	units timeUnits
+	units inputTimeUnits
 }
 
 // Time unit definitions for input parsing. Use partial matches.
-type timeUnits map[string]int64
+type inputTimeUnits map[string]int64
 
 // Definition of time ranges to match against.
 type timeRanges struct {
-	upperLimit int64
-	divideBy   int64
-	ranges     []timeRange
+	upperLimit         int64 // Range end.
+	divideBy           int64
+	skipWhenPrecise    bool   // Skip this range in precise mode (useful for skipping "weeks")
+	onlyLastDigitAfter int64  // Consider only the last digit for the unit after this number. 0 to disable.
+	singular           string // Most languages need special treatment for singular units.
+	ranges             []timeRange
 }
+
+// Represents a single time range.
 type timeRange struct {
-	upperLimit int64
+	upperLimit int64 // Limit in the units of the range!
 	format     string
 }

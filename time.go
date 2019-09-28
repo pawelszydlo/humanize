@@ -44,18 +44,46 @@ func (humanizer *Humanizer) humanizeDuration(seconds int64, precise bool) string
 	humanized := []string{}
 
 	for secondsLeft > 0 {
-		// Find the ranges closest but bigger then diff.
-		n := sort.Search(len(humanizer.provider.times.ranges), func(i int) bool {
+		// Within all the ranges, find the one matching our time best (closest, but bigger).
+		rangeIndex := sort.Search(len(humanizer.provider.times.ranges), func(i int) bool {
+			// If we are in precise mode, and next range would be a fit but should be skipped, use this one.
+			if precise && i < len(humanizer.provider.times.ranges)-1 &&
+				humanizer.provider.times.ranges[i+1].upperLimit > secondsLeft &&
+				humanizer.provider.times.ranges[i+1].skipWhenPrecise {
+				return true
+			}
 			return humanizer.provider.times.ranges[i].upperLimit > secondsLeft
 		})
 
-		// Within the ranges find the one matching our time best.
-		timeRanges := humanizer.provider.times.ranges[n]
-		k := sort.Search(len(timeRanges.ranges), func(i int) bool {
-			return timeRanges.ranges[i].upperLimit > secondsLeft
+		// Select this unit range and convert actualTime to it.
+		unitRanges := humanizer.provider.times.ranges[rangeIndex]
+		actualTime := secondsLeft / unitRanges.divideBy // Integer division!
+
+		if actualTime == 0 {
+
+		}
+
+		// Subtract the time span covered by this part.
+		secondsLeft -= actualTime * unitRanges.divideBy
+		// TODO: smarter imprecise mode.
+		if !precise { // We don't care about the reminder.
+			secondsLeft = 0
+		}
+
+		if actualTime == 1 { // Special case for singular unit.
+			humanized = append(humanized, unitRanges.singular)
+			continue
+		}
+
+		// Within the unit range, find the unit best fitting our actualTime (closest, but bigger).
+		searchTime := actualTime
+		if unitRanges.onlyLastDigitAfter != 0 && actualTime > unitRanges.onlyLastDigitAfter {
+			searchTime = actualTime % 10
+		}
+		unitIndex := sort.Search(len(unitRanges.ranges), func(i int) bool {
+			return unitRanges.ranges[i].upperLimit > searchTime
 		})
-		timeRange := timeRanges.ranges[k]
-		actualTime := secondsLeft / timeRanges.divideBy // Integer division!
+		timeRange := unitRanges.ranges[unitIndex]
 
 		// If range has a placeholder for a number, insert it.
 		if strings.Contains(timeRange.format, "%d") {
@@ -64,11 +92,6 @@ func (humanizer *Humanizer) humanizeDuration(seconds int64, precise bool) string
 			humanized = append(humanized, timeRange.format)
 		}
 
-		// Subtract the time span covered by this part.
-		secondsLeft -= actualTime * timeRanges.divideBy
-		if !precise { // We don't care about the reminder.
-			secondsLeft = 0
-		}
 	}
 
 	if len(humanized) == 1 {
@@ -93,7 +116,6 @@ func (humanizer *Humanizer) TimeDiffNow(date time.Time, precise bool) string {
 //   precise=false -> "3 months"
 //   precise=true  -> "2 months, 1 week and 3 days"
 //
-// TODO: in precise mode some ranges should be skipped, like weeks in the example above.
 func (humanizer *Humanizer) TimeDiff(startDate, endDate time.Time, precise bool) string {
 	diff := endDate.Unix() - startDate.Unix()
 

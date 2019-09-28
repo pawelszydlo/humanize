@@ -3,32 +3,25 @@ package humanize
 var lang_en = languageProvider{
 	times: times{
 		ranges: []timeRanges{
-			{Minute, 1, []timeRange{
-				{2, "1 second"},
-				{60, "%d seconds"},
+			{Minute, 1, false, 0, "1 second", []timeRange{
+				{LongTime, "%d seconds"},
 			}},
-			{Hour, Minute, []timeRange{
-				{2 * Minute, "1 minute"},
-				{Hour, "%d minutes"},
+			{Hour, Minute, false, 0, "1 minute", []timeRange{
+				{LongTime, "%d minutes"},
 			}},
-			{Day, Hour, []timeRange{
-				{2 * Hour, "1 hour"},
-				{Day, "%d hours"},
+			{Day, Hour, false, 0, "1 hour", []timeRange{
+				{LongTime, "%d hours"},
 			}},
-			{Week, Day, []timeRange{
-				{2 * Day, "1 day"},
-				{Week, "%d days"},
+			{Week, Day, false, 0, "1 day", []timeRange{
+				{LongTime, "%d days"},
 			}},
-			{Month, Week, []timeRange{
-				{2 * Week, "1 week"},
-				{Month, "%d weeks"},
+			{Month, Week, true, 0, "1 week", []timeRange{
+				{LongTime, "%d weeks"},
 			}},
-			{Year, Month, []timeRange{
-				{2 * Month, "1 month"},
-				{Year, "%d months"},
+			{Year, Month, false, 0, "1 month", []timeRange{
+				{LongTime, "%d months"},
 			}},
-			{LongTime, Year, []timeRange{
-				{2 * Year, "1 year"},
+			{LongTime, Year, false, 0, "1 year", []timeRange{
 				{LongTime, "%d years"},
 			}},
 		},
@@ -36,7 +29,7 @@ var lang_en = languageProvider{
 		past:         "%s ago",
 		now:          "now",
 		remainderSep: "and",
-		units: timeUnits{
+		units: inputTimeUnits{
 			"second": 1,
 			"minute": Minute,
 			"hour":   Hour,

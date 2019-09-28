@@ -18,12 +18,12 @@ func TestHumanizer_TimeDiffNow(t *testing.T) {
 		},
 		"pl": {
 			time.Duration(0):                           "teraz",
-			time.Duration(1 * time.Second):             "za 1 sekundę",
+			time.Duration(1 * time.Second):             "za sekundę",
 			time.Duration(15 * time.Minute):            "za 15 minut",
 			time.Duration(2*time.Hour + 5*time.Minute): "za 2 godziny",
 			time.Duration(3 * 24 * time.Hour):          "za 3 dni",
 			time.Duration(15 * 24 * time.Hour):         "za 2 tygodnie",
-			time.Duration(40 * 24 * time.Hour):         "za 1 miesiąc",
+			time.Duration(40 * 24 * time.Hour):         "za miesiąc",
 		},
 	}
 
@@ -39,6 +39,27 @@ func TestHumanizer_TimeDiffNow(t *testing.T) {
 				t.Errorf("Expected '%s', got '%s'.", expected, humanized)
 			}
 		}
+	}
+}
+
+func TestHumanizer_TimeDiff_PreciseSkip(t *testing.T) {
+	humanizer, err := New("en")
+	if err != nil {
+		t.Errorf("Humanizer creation failed with error: %s", err)
+	}
+	startDate := time.Date(2000, 6, 1, 12, 0, 0, 0, time.UTC)
+	endDate := time.Date(2000, 6, 17, 12, 0, 0, 0, time.UTC)
+	// Precise.
+	humanized := humanizer.TimeDiff(startDate, endDate, true)
+	expected := "in 16 days"
+	if humanized != expected {
+		t.Errorf("Expected '%s', got '%s'.", expected, humanized)
+	}
+	// Imprecise.
+	humanized = humanizer.TimeDiff(startDate, endDate, false)
+	expected = "in 2 weeks"
+	if humanized != expected {
+		t.Errorf("Expected '%s', got '%s'.", expected, humanized)
 	}
 }
 
@@ -75,16 +96,16 @@ func TestHumanizer_TimeDiff_Imprecise(t *testing.T) {
 		},
 		"pl": {
 			time.Date(2000, 6, 15, 12, 0, 0, 0, time.UTC):   "teraz",
-			time.Date(2000, 6, 15, 12, 0, 1, 0, time.UTC):   "za 1 sekundę",
+			time.Date(2000, 6, 15, 12, 0, 1, 0, time.UTC):   "za sekundę",
 			time.Date(2000, 6, 15, 11, 59, 30, 0, time.UTC): "30 sekund temu",
 			time.Date(2000, 6, 15, 12, 15, 1, 0, time.UTC):  "za 15 minut",
-			time.Date(2000, 6, 15, 11, 49, 1, 0, time.UTC):  "10 minut temu",
+			time.Date(2000, 6, 15, 11, 37, 1, 0, time.UTC):  "22 minuty temu",
 			time.Date(2000, 6, 18, 12, 0, 1, 0, time.UTC):   "za 3 dni",
 			time.Date(2000, 6, 10, 5, 0, 1, 0, time.UTC):    "5 dni temu",
 			time.Date(2000, 6, 29, 12, 0, 1, 0, time.UTC):   "za 2 tygodnie",
 			time.Date(2000, 6, 1, 1, 0, 1, 0, time.UTC):     "2 tygodnie temu",
-			time.Date(2000, 7, 15, 12, 0, 1, 0, time.UTC):   "za 1 miesiąc",
-			time.Date(2000, 5, 15, 12, 0, 1, 0, time.UTC):   "1 miesiąc temu",
+			time.Date(2000, 7, 15, 12, 0, 1, 0, time.UTC):   "za miesiąc",
+			time.Date(2000, 5, 15, 12, 0, 1, 0, time.UTC):   "miesiąc temu",
 		},
 	}
 
@@ -117,11 +138,11 @@ func TestHumanizer_TimeDiff_Precise(t *testing.T) {
 			time.Date(2020, 8, 1, 0, 0, 0, 0, time.UTC):     "in 20 years, 5 months, 1 day and 12 hours",
 		},
 		"pl": {
-			time.Date(2000, 6, 15, 12, 0, 1, 0, time.UTC):   "za 1 sekundę",
+			time.Date(2000, 6, 15, 12, 0, 1, 0, time.UTC):   "za sekundę",
 			time.Date(2000, 6, 15, 11, 59, 30, 0, time.UTC): "30 sekund temu",
-			time.Date(2000, 6, 15, 12, 15, 1, 0, time.UTC):  "za 15 minut i 1 sekundę",
+			time.Date(2000, 6, 15, 12, 15, 1, 0, time.UTC):  "za 15 minut i sekundę",
 			time.Date(2000, 6, 15, 11, 49, 1, 0, time.UTC):  "10 minut i 59 sekund temu",
-			time.Date(2000, 6, 18, 12, 5, 1, 0, time.UTC):   "za 3 dni, 5 minut i 1 sekundę",
+			time.Date(2000, 6, 18, 12, 5, 1, 0, time.UTC):   "za 3 dni, 5 minut i sekundę",
 			time.Date(2000, 6, 10, 5, 0, 0, 0, time.UTC):    "5 dni i 7 godzin temu",
 			time.Date(2020, 8, 1, 0, 0, 0, 0, time.UTC):     "za 20 lat, 5 miesięcy, 1 dzień i 12 godzin",
 		},
