@@ -2,6 +2,7 @@
 Human readable formatting and input parsing for Go with l18n support.
 
 ### Features
+* Based partially on golang.org/x/text/message, hence it's locale aware
 * Supports varying numerals if language calls for it, e.g.:
 ```
 2 godziny
@@ -44,6 +45,13 @@ Pretty print timestamps (seconds only):
 ```golang
 fmt.Println(humanizer.SecondsToTimeString(67))
 // Prints: 01:07
+```
+#### Numbers
+
+Number humanization (locale aware):
+```golang
+fmt.Println(humanizer.HumanizeNumber(1234.567, 2))
+// Prints: 1,234.57
 ```
 #### Metric prefixes
 
