@@ -117,7 +117,7 @@ func (humanizer *Humanizer) ParsePrefix(input string) (float64, error) {
 	}
 	// Parse first two groups into a float.
 	number, err := strconv.ParseFloat(matched[1]+"."+matched[2], 64)
-	if err != nil {
+	if err != nil { // This can only fail if the regexp is wrong and allows non numbers.
 		return 0, err
 	}
 	// No suffix, no multiplication.
@@ -131,6 +131,6 @@ func (humanizer *Humanizer) ParsePrefix(input string) (float64, error) {
 		}
 	}
 
-	// No prefix was found at all.
+	// No prefix was found. This should never happen as the regexp covers all units.
 	return 0, errors.New(fmt.Sprintf("Can't match metric prefix for '%s'.", matched[3]))
 }

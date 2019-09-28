@@ -38,7 +38,7 @@ func (humanizer *Humanizer) buildTimeInputRe() {
 // humanizeDuration will return a humanized form of time duration.
 func (humanizer *Humanizer) humanizeDuration(seconds int64, precise bool) string {
 	if seconds < 1 {
-		panic("Cannot humanize durations < 1 sec.")
+		return humanizer.provider.times.now
 	}
 	secondsLeft := seconds
 	humanized := []string{}
@@ -97,10 +97,6 @@ func (humanizer *Humanizer) TimeDiffNow(date time.Time, precise bool) string {
 func (humanizer *Humanizer) TimeDiff(startDate, endDate time.Time, precise bool) string {
 	diff := endDate.Unix() - startDate.Unix()
 
-	if diff == 0 {
-		return humanizer.provider.times.now
-	}
-
 	// Don't bother with Math.Abs
 	absDiff := diff
 	if absDiff < 0 {
@@ -110,7 +106,9 @@ func (humanizer *Humanizer) TimeDiff(startDate, endDate time.Time, precise bool)
 	humanized := humanizer.humanizeDuration(absDiff, precise)
 
 	// Past or future?
-	if diff > 0 {
+	if diff == 0 {
+		return humanized
+	} else if diff > 0 {
 		return fmt.Sprintf(humanizer.provider.times.future, humanized)
 	} else {
 		return fmt.Sprintf(humanizer.provider.times.past, humanized)
