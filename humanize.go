@@ -14,18 +14,20 @@ type Humanizer struct {
 	provider      languageProvider
 	printer       *message.Printer
 	timeInputRe   *regexp.Regexp
-	metricInputRe *regexp.Regexp
+	prefixInputRe *regexp.Regexp
+	allPrefixes   []Prefix // Helper slice of all prefixes.
 }
 
 // New creates a new humanizer for a given language.
 func New(langName string) (*Humanizer, error) {
 	if provider, exists := languages[langName]; exists {
 		humanizer := &Humanizer{
-			provider: provider,
-			printer:  message.NewPrinter(language.MustParse(langName)),
+			provider:    provider,
+			printer:     message.NewPrinter(language.MustParse(langName)),
+			allPrefixes: make([]Prefix, 0, len(provider.siPrefixes)+len(provider.bitPrefixes)),
 		}
 		humanizer.buildTimeInputRe()
-		humanizer.buildMetricInputRe()
+		humanizer.preparePrefixes()
 		return humanizer, nil
 	} else {
 		return nil, errors.New(fmt.Sprintf("Language not supported: %s", langName))

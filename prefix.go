@@ -3,6 +3,7 @@ package humanize
 import (
 	"errors"
 	"fmt"
+	"math/big"
 	"regexp"
 	"sort"
 	"strconv"
@@ -11,59 +12,27 @@ import (
 
 // SI prefixing functions.
 
-type siPrefix struct {
+type Prefix struct {
 	multiplier float64
 	short      string
 	long       string
 }
 
-// TODO: using float64 here leads to errors on the edges of the spectrum.
-// TODO: implement bit based units (kibi etc.)
-var siPrefixes = []siPrefix{
-	{1000000000000000000000000, "Y", "yotta"},
-	{1000000000000000000000, "Z", "zetta"},
-	{1000000000000000000, "E", "exa"},
-	{1000000000000000, "P", "peta"},
-	{1000000000000, "T", "tera"},
-	{1000000000, "G", "giga"},
-	{1000000, "M", "mega"},
-	{1000, "k", "kilo"},
-	{100, "h", "hecto"},
-	{10, "da", "deca"},
-	{0.1, "d", "deci"},
-	{0.01, "c", "centi"},
-	{0.001, "m", "milli"},
-	{0.000001, "µ", "micro"},
-	{0.000000001, "n", "nano"},
-	{0.000000000001, "p", "pico"},
-	{0.000000000000001, "f", "femto"},
-	{0.000000000000000001, "a", "atto"},
-	{0.000000000000000000001, "z", "zepto"},
-	{0.000000000000000000000001, "y", "yocto"},
-}
-
-// buildMetricInputRe will build a regular expression to match all possible metric prefix inputs.
-func (humanizer *Humanizer) buildMetricInputRe() {
-	// Get all possible suffixes.
-	suffixes := make([]string, 0, len(siPrefixes))
-	for _, suffix := range siPrefixes {
-		suffixes = append(suffixes, suffix.long)
-		suffixes = append(suffixes, suffix.short)
+// preparePrefixes will build a regular expression to match all possible prefix inputs.
+func (humanizer *Humanizer) preparePrefixes() {
+	// Save all possible prefixes.
+	humanizer.allPrefixes = append(humanizer.allPrefixes, humanizer.provider.siPrefixes...)
+	humanizer.allPrefixes = append(humanizer.allPrefixes, humanizer.provider.bitPrefixes...)
+	// List of all prefixes as strings.
+	prefixes := make([]string, 0, len(humanizer.allPrefixes))
+	// Append prefixes.
+	for _, prefix := range humanizer.allPrefixes {
+		prefixes = append(prefixes, prefix.long)
+		prefixes = append(prefixes, prefix.short)
 	}
-	// Regexp will match: number, optional coma or dot, optional second number, optional space, optional suffix
-	humanizer.metricInputRe = regexp.MustCompile(
-		`([0-9]+)[.,]?([0-9]*?) ?(` + strings.Join(suffixes, "|") + `)?$`)
-}
-
-// PrefixFastInt like PrefixFast but accepting integer values.
-func (humanizer *Humanizer) PrefixFastInt(value int64) string {
-	return humanizer.PrefixFast(float64(value))
-}
-
-// PrefixFast is a convenience function for easy prefixing.
-// Precision is 1 decimal place. Will not prefix values in range 0.01 - 1000 and will append only the short prefix.
-func (humanizer *Humanizer) PrefixFast(value float64) string {
-	return humanizer.Prefix(value, 1, 1000, true)
+	// Regexp will match: number, optional coma or dot, optional second number, optional space, optional suffix.
+	humanizer.prefixInputRe = regexp.MustCompile(
+		`([0-9]+)[.,]?([0-9]*?) ?(` + strings.Join(prefixes, "|") + `)?$`)
 }
 
 // Hack to get rid of trailing zeroes (while keeping the precision if necessary)
@@ -75,13 +44,12 @@ func (humanizer *Humanizer) trimZeroes(value string) string {
 	return value
 }
 
-// Prefix appends a SI prefix to the value and converts it accordingly.
-// Arguments:
-//  value - value to be converted
-//  decimals - decimal precision for the converted value
-//  threshold - upper bound of the range to be ignored. Lower bound is 1/threshold.
-//  short - whether to use short or long prefix.
-func (humanizer *Humanizer) Prefix(value float64, decimals int, threshold int64, short bool) string {
+// Performs the actual prefixing.
+func (humanizer *Humanizer) prefix(value float64, decimals int, threshold int64, short bool, bit bool) string {
+	prefixes := humanizer.provider.siPrefixes
+	if bit {
+		prefixes = humanizer.provider.bitPrefixes
+	}
 	if threshold < 10 {
 		threshold = 10
 	}
@@ -90,23 +58,55 @@ func (humanizer *Humanizer) Prefix(value float64, decimals int, threshold int64,
 		return humanizer.trimZeroes(strconv.FormatFloat(value, 'f', decimals, 64))
 	}
 	// Find most appropriate prefix.
-	i := sort.Search(len(siPrefixes), func(i int) bool {
-		return siPrefixes[i].multiplier < value
+	i := sort.Search(len(prefixes), func(i int) bool {
+		return prefixes[i].multiplier < value
 	})
 
 	convertedValue := humanizer.trimZeroes(
-		strconv.FormatFloat(value/siPrefixes[i].multiplier, 'f', decimals, 64))
+		strconv.FormatFloat(value/prefixes[i].multiplier, 'f', decimals, 64))
 
 	if short {
-		return convertedValue + siPrefixes[i].short
+		return convertedValue + prefixes[i].short
 	} else {
-		return convertedValue + " " + siPrefixes[i].long
+		return convertedValue + " " + prefixes[i].long
 	}
 }
 
+// BitPrefixFast is a convenience wrapper over BitPrefix. See help for PrefixFast.
+func (humanizer *Humanizer) BitPrefixFast(value float64) string {
+	return humanizer.BitPrefix(value, 1, 1000, true)
+}
+
+// PrefixFast is a convenience function for easy prefixing with a SI prefix.
+// Precision is 1 decimal place. Will not prefix values in range 0.01 - 1000 and will append only the short prefix.
+func (humanizer *Humanizer) SiPrefixFast(value float64) string {
+	return humanizer.SiPrefix(value, 1, 1000, true)
+}
+
+// SiPrefix appends a SI prefix to the value and converts it accordingly.
+// Arguments:
+//  value - value to be converted.
+//  decimals - decimal precision for the converted value.
+//  threshold - upper bound of the value range to be ignored. Lower bound is 1/threshold.
+//  short - whether to use short or long prefix.
+func (humanizer *Humanizer) SiPrefix(value float64, decimals int, threshold int64, short bool) string {
+	return humanizer.prefix(value, decimals, threshold, short, false)
+}
+
+// BitPrefix appends a bit prefix to the value and converts it accordingly.
+// Arguments:
+//  value - value to be converted (should be in bytes).
+//  decimals - decimal precision for the converted value.
+//  threshold - upper bound of the value range to be ignored. Lower bound is 1/threshold.
+//  short - whether to use short or long prefix.
+func (humanizer *Humanizer) BitPrefix(value float64, decimals int, threshold int64, short bool) string {
+	return humanizer.prefix(value, decimals, threshold, short, true)
+}
+
 // ParsePrefix will return a number as parsed from input string.
+// TODO: precision is an issue with big, uniform numbers. Figure it out.
 func (humanizer *Humanizer) ParsePrefix(input string) (float64, error) {
-	matched := humanizer.metricInputRe.FindStringSubmatch(strings.TrimSpace(input))
+	matched := humanizer.prefixInputRe.FindStringSubmatch(strings.TrimSpace(input))
 	if len(matched) != 4 {
 		return 0, errors.New(fmt.Sprintf("Cannot parse '%s'.", input))
 	}
@@ -115,7 +115,7 @@ func (humanizer *Humanizer) ParsePrefix(input string) (float64, error) {
 	if matched[2] == "" { // Decimal component is empty.
 		matched[2] = "0"
 	}
-	// Parse first two groups into a float.
+	// Parse first two groups a float.
 	number, err := strconv.ParseFloat(matched[1]+"."+matched[2], 64)
 	if err != nil { // This can only fail if the regexp is wrong and allows non numbers.
 		return 0, err
@@ -124,13 +124,16 @@ func (humanizer *Humanizer) ParsePrefix(input string) (float64, error) {
 	if matched[3] == "" {
 		return number, nil
 	}
-	// Get the multiplier for the suffix.
-	for _, prefix := range siPrefixes {
+	// Get the multiplier for the prefix.
+	for _, prefix := range humanizer.allPrefixes {
 		if prefix.short == matched[3] || prefix.long == matched[3] {
-			return number * prefix.multiplier, nil
+			result, _ := new(big.Float).Mul(
+				new(big.Float).SetFloat64(number),
+				new(big.Float).SetFloat64(prefix.multiplier)).Float64()
+			return result, nil
 		}
 	}
 
 	// No prefix was found. This should never happen as the regexp covers all units.
-	return 0, errors.New(fmt.Sprintf("Can't match metric prefix for '%s'.", matched[3]))
+	return 0, errors.New(fmt.Sprintf("Can't match prefix for '%s'.", matched[3]))
 }

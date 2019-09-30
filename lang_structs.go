@@ -10,7 +10,9 @@ var languages = map[string]languageProvider{
 
 // languageProvider is a struct defining all the needed language elements.
 type languageProvider struct {
-	times times
+	times       times
+	siPrefixes  []Prefix
+	bitPrefixes []Prefix
 }
 
 // Time related language elements.

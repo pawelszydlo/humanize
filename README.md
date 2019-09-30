@@ -42,7 +42,7 @@ Number humanization (locale aware):
 fmt.Println(humanizer.HumanizeNumber(1234.567, 2))
 // Prints: 1,234.57
 ```
-### Metric prefixes
+### Prefixes (metric and bit)
 
 Decoding value from human input:
 ```golang
@@ -50,19 +50,31 @@ value, _ := humanizer.ParsePrefix("1.5k")
 fmt.Println(value)
 // Prints: 1500
 ```
-Number conversion:
+Bit prefixes are recognized as well:
+```golang
+value, _ := humanizer.ParsePrefix("1.5Ki")
+fmt.Println(value)
+// Prints: 1536
+```
+Convert big number into something readable:
 ```golang
 // Quick usage.
-fmt.Println(humanizer.PrefixFast(174512))
+fmt.Println(humanizer.SiPrefixFast(174512))
 // Prints: 174.5k
 
 // Controlled usage.
-fmt.Println(humanizer.Prefix(1440000, 2, 1000, false))
+fmt.Println(humanizer.SiPrefix(1440000, 2, 1000, false))
 // Prints: 1.44 mega
+```
+Same with bit prefixes:
+```golang
+// Quick usage.
+fmt.Println(humanizer.BitPrefixFast(1509949))
+// Prints: 1.44Mi
 ```
 ----
 
 ## TODO
-* Bit-based unit prefixes (kibi etc.)
-* Smarter imprecise mode for time durations
+* Float precision issues when parsing extreme prefixes.
+* Smarter imprecise mode for time durations.
 * More features?
