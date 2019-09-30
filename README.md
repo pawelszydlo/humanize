@@ -56,6 +56,9 @@ value, _ := humanizer.ParsePrefix("1.5Ki")
 fmt.Println(value)
 // Prints: 1536
 ```
+NOTE: ParsePrefix will return a precise value (big.Float), so you might get fractions
+where you wouldn't expect them (e.g. bytes). It's up to you to handle that.
+
 Convert big number into something readable:
 ```golang
 // Quick usage.
@@ -75,6 +78,5 @@ fmt.Println(humanizer.BitPrefixFast(1509949))
 ----
 
 ## TODO
-* Float precision issues when parsing extreme prefixes.
 * Smarter imprecise mode for time durations.
 * More features?

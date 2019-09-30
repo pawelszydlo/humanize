@@ -13,6 +13,8 @@ import (
 
 // Prefixing functions.
 
+const PREC = 64
+
 type Prefix struct {
 	base        int
 	power       int
@@ -53,6 +55,28 @@ var bitPrefixes = []Prefix{
 	{2, 30, math.Pow(2, 30), "Gi", "gibi"},
 	{2, 20, math.Pow(2, 20), "Mi", "mebi"},
 	{2, 10, math.Pow(2, 10), "Ki", "kibi"},
+}
+
+func bigPow(x int, y int) *big.Float {
+	one := new(big.Float).SetInt64(1)
+	if y == 0 {
+		return one
+	}
+	bigX := new(big.Float).SetInt64(int64(x))
+	product := new(big.Float).Copy(bigX)
+	// Always calculate positive power, inverse later.
+	isNeg := false
+	if y < 0 {
+		isNeg = true
+		y = -y
+	}
+	for i := int(0); i < y-1; i++ {
+		product = new(big.Float).Mul(product, bigX)
+	}
+	if isNeg {
+		return new(big.Float).Quo(one, product)
+	}
+	return product
 }
 
 // preparePrefixes will build a regular expression to match all possible prefix inputs.
@@ -144,21 +168,17 @@ func (humanizer *Humanizer) BitPrefix(value float64, decimals int, threshold int
 }
 
 // ParsePrefix will return a number as parsed from input string.
-// TODO: precision is an issue with big, uniform numbers. Figure it out.
-func (humanizer *Humanizer) ParsePrefix(input string) (float64, error) {
+func (humanizer *Humanizer) ParsePrefix(input string) (*big.Float, error) {
 	matched := humanizer.prefixInputRe.FindStringSubmatch(strings.TrimSpace(input))
+	// 0 - full match, 1 - number, 2 - decimal, 3 - suffix
 	if len(matched) != 4 {
-		return 0, errors.New(fmt.Sprintf("Cannot parse '%s'.", input))
+		return new(big.Float), errors.New(fmt.Sprintf("Cannot parse '%s'.", input))
 	}
 
-	// 0 - full match, 1 - number, 2 - decimal, 3 - suffix
-	if matched[2] == "" { // Decimal component is empty.
-		matched[2] = "0"
-	}
-	// Parse first two groups a float.
-	number, err := strconv.ParseFloat(matched[1]+"."+matched[2], 64)
-	if err != nil { // This can only fail if the regexp is wrong and allows non numbers.
-		return 0, err
+	// Parse first two groups as a float.
+	number, ok := new(big.Float).SetString(matched[1] + "." + matched[2])
+	if !ok { // This can only fail if the regexp is wrong and allows non numbers.
+		return new(big.Float), errors.New("Can't parse the number.")
 	}
 	// No suffix, no multiplication.
 	if matched[3] == "" {
@@ -167,13 +187,11 @@ func (humanizer *Humanizer) ParsePrefix(input string) (float64, error) {
 	// Get the multiplier for the prefix.
 	for _, prefix := range humanizer.allPrefixes {
 		if prefix.short == matched[3] || prefix.long == matched[3] {
-			result, _ := new(big.Float).Mul(
-				new(big.Float).SetFloat64(number),
-				new(big.Float).SetFloat64(prefix.approxValue)).Float64()
+			result := new(big.Float).Mul(number, bigPow(prefix.base, prefix.power))
 			return result, nil
 		}
 	}
 
 	// No prefix was found. This should never happen as the regexp covers all units.
-	return 0, errors.New(fmt.Sprintf("Can't match prefix for '%s'.", matched[3]))
+	return new(big.Float), errors.New(fmt.Sprintf("Can't match prefix for '%s'.", matched[3]))
 }

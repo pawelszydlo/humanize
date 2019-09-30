@@ -1,15 +1,9 @@
 package humanize
 
 import (
-	"math"
+	"math/big"
 	"testing"
 )
-
-// almostEqual does float comparison ignoring their least significant bit.
-func almostEqual(a, b float64) bool {
-	ai, bi := int64(math.Float64bits(a)), int64(math.Float64bits(b))
-	return a == b || -1 <= ai-bi && ai-bi <= 1
-}
 
 func TestHumanizer_Prefix(t *testing.T) {
 	humanizer, err := New("en")
@@ -52,22 +46,26 @@ func TestHumanizer_ParsePrefix(t *testing.T) {
 		t.Errorf("Humanizer creation failed with error: %s", err)
 	}
 
-	cases := map[string]float64{
+	// Huge cases need to be loaded from string.
+	case5y, _ := new(big.Float).SetString("5000000000000000000000000")
+	case736Yi, _ := new(big.Float).SetString("889769403236367072583745536")
+
+	cases := map[string]*big.Float{
 		// SI.
-		"2.9k":       2900,
-		"13":         13,
-		"0.5":        0.5,
-		"13.5 kilo ": 13500,
-		"20m":        0.020,
-		" 20M ":      20000000,
-		"5yotta":     5000000000000000000000000,
-		"15 µ":       0.000015,
-		"3 y":        0.000000000000000000000003,
+		"2.9k":       new(big.Float).SetInt64(2900),
+		"13.":        new(big.Float).SetInt64(13),
+		"0.5":        new(big.Float).SetFloat64(0.5),
+		"13.5 kilo ": new(big.Float).SetInt64(13500),
+		"20m":        new(big.Float).SetFloat64(0.020),
+		" 20M ":      new(big.Float).SetInt64(20000000),
+		"5yotta":     case5y,
+		"15 µ":       new(big.Float).SetFloat64(0.000015),
+		"3 y":        new(big.Float).SetFloat64(0.000000000000000000000003),
 		// Bit.
-		"3Mi":     3145728,
-		"50 tebi": 54975581388800,
-		"0.5 Gi":  536870912,
-		"736 Yi":  889769403236367072583745536,
+		"3Mi":     new(big.Float).SetInt64(3145728),
+		"50 tebi": new(big.Float).SetInt64(54975581388800),
+		"0.5 Gi":  new(big.Float).SetInt64(536870912),
+		"736 Yi":  case736Yi,
 	}
 
 	for input, expected := range cases {
@@ -76,7 +74,8 @@ func TestHumanizer_ParsePrefix(t *testing.T) {
 			t.Errorf("Error parsing '%s': %s", input, err)
 		}
 
-		if !almostEqual(parsed, expected) {
+		// If string representation is the same we are close enough.
+		if parsed.String() != expected.String() {
 			t.Errorf("Expected '%f', got '%f'.", expected, parsed)
 		}
 	}
