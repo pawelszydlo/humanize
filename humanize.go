@@ -24,7 +24,7 @@ func New(langName string) (*Humanizer, error) {
 		humanizer := &Humanizer{
 			provider:    provider,
 			printer:     message.NewPrinter(language.MustParse(langName)),
-			allPrefixes: make([]Prefix, 0, len(provider.siPrefixes)+len(provider.bitPrefixes)),
+			allPrefixes: make([]Prefix, len(siPrefixes)+len(bitPrefixes)),
 		}
 		humanizer.buildTimeInputRe()
 		humanizer.preparePrefixes()

@@ -17,7 +17,7 @@ duration, _ := humanizer.ParseDuration("2 days, 5 hours and 40 seconds")
 fmt.Println(duration) 
 // Prints: 53h0m40s
 ```
-Humanized time difference:*
+Humanized time difference:
 ```golang
 firstDate := time.Date(2017, 3, 21, 12, 30, 15, 0, time.UTC)
 secondDate := time.Date(2017, 6, 21, 0, 0, 0, 0, time.UTC)

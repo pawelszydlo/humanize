@@ -1,7 +1,5 @@
 package humanize
 
-import "math"
-
 // English l10n. For description see lang_structs.go.
 var lang_en = languageProvider{
 	times: times{
@@ -42,36 +40,36 @@ var lang_en = languageProvider{
 			"year":   Year,
 		},
 	},
-	siPrefixes: []Prefix{
-		{math.Pow10(24), "Y", "yotta"},
-		{math.Pow10(21), "Z", "zetta"},
-		{math.Pow10(18), "E", "exa"},
-		{math.Pow10(15), "P", "peta"},
-		{math.Pow10(12), "T", "tera"},
-		{math.Pow10(9), "G", "giga"},
-		{math.Pow10(6), "M", "mega"},
-		{math.Pow10(3), "k", "kilo"},
-		{math.Pow10(2), "h", "hecto"},
-		{10, "da", "deca"},
-		{math.Pow10(-1), "d", "deci"},
-		{math.Pow10(-2), "c", "centi"},
-		{math.Pow10(-3), "m", "milli"},
-		{math.Pow10(-6), "µ", "micro"},
-		{math.Pow10(-9), "n", "nano"},
-		{math.Pow10(-12), "p", "pico"},
-		{math.Pow10(-15), "f", "femto"},
-		{math.Pow10(-18), "a", "atto"},
-		{math.Pow10(-21), "z", "zepto"},
-		{math.Pow10(-24), "y", "yocto"},
-	},
-	bitPrefixes: []Prefix{
-		{math.Pow(2, 80), "Yi", "yobi"},
-		{math.Pow(2, 70), "Zi", "zebi"},
-		{math.Pow(2, 60), "Ei", "exbi"},
-		{math.Pow(2, 50), "Pi", "pebi"},
-		{math.Pow(2, 40), "Ti", "tebi"},
-		{math.Pow(2, 30), "Gi", "gibi"},
-		{math.Pow(2, 20), "Mi", "mebi"},
-		{math.Pow(2, 10), "Ki", "kibi"},
+	prefixes: map[string]string{
+		// SI.
+		"Y":  "yotta",
+		"Z":  "zetta",
+		"E":  "exa",
+		"P":  "peta",
+		"T":  "tera",
+		"G":  "giga",
+		"M":  "mega",
+		"k":  "kilo",
+		"h":  "hecto",
+		"da": "deca",
+		"d":  "deci",
+		"c":  "centi",
+		"m":  "milli",
+		"µ":  "micro",
+		"n":  "nano",
+		"p":  "pico",
+		"f":  "femto",
+		"a":  "atto",
+		"z":  "zepto",
+		"y":  "yocto",
+		// Bit.
+		"Yi": "yobi",
+		"Zi": "zebi",
+		"Ei": "exbi",
+		"Pi": "pebi",
+		"Ti": "tebi",
+		"Gi": "gibi",
+		"Mi": "mebi",
+		"Ki": "kibi",
 	},
 }

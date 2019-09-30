@@ -3,6 +3,7 @@ package humanize
 import (
 	"errors"
 	"fmt"
+	"math"
 	"math/big"
 	"regexp"
 	"sort"
@@ -10,23 +11,61 @@ import (
 	"strings"
 )
 
-// SI prefixing functions.
+// Prefixing functions.
 
 type Prefix struct {
-	multiplier float64
-	short      string
-	long       string
+	base        int
+	power       int
+	approxValue float64
+	short       string
+	long        string
+}
+
+var siPrefixes = []Prefix{
+	{10, 24, math.Pow10(24), "Y", "yotta"},
+	{10, 21, math.Pow10(21), "Z", "zetta"},
+	{10, 18, math.Pow10(18), "E", "exa"},
+	{10, 15, math.Pow10(15), "P", "peta"},
+	{10, 12, math.Pow10(12), "T", "tera"},
+	{10, 9, math.Pow10(9), "G", "giga"},
+	{10, 6, math.Pow10(6), "M", "mega"},
+	{10, 3, math.Pow10(3), "k", "kilo"},
+	{10, 2, math.Pow10(2), "h", "hecto"},
+	{10, 1, 10, "da", "deca"},
+	{10, -1, math.Pow10(-1), "d", "deci"},
+	{10, -2, math.Pow10(-2), "c", "centi"},
+	{10, -3, math.Pow10(-3), "m", "milli"},
+	{10, -6, math.Pow10(-6), "µ", "micro"},
+	{10, -9, math.Pow10(-9), "n", "nano"},
+	{10, -12, math.Pow10(-12), "p", "pico"},
+	{10, -15, math.Pow10(-15), "f", "femto"},
+	{10, -18, math.Pow10(-18), "a", "atto"},
+	{10, -21, math.Pow10(-21), "z", "zepto"},
+	{10, -24, math.Pow10(-24), "y", "yocto"},
+}
+
+var bitPrefixes = []Prefix{
+	{2, 80, math.Pow(2, 80), "Yi", "yobi"},
+	{2, 70, math.Pow(2, 70), "Zi", "zebi"},
+	{2, 60, math.Pow(2, 60), "Ei", "exbi"},
+	{2, 50, math.Pow(2, 50), "Pi", "pebi"},
+	{2, 40, math.Pow(2, 40), "Ti", "tebi"},
+	{2, 30, math.Pow(2, 30), "Gi", "gibi"},
+	{2, 20, math.Pow(2, 20), "Mi", "mebi"},
+	{2, 10, math.Pow(2, 10), "Ki", "kibi"},
 }
 
 // preparePrefixes will build a regular expression to match all possible prefix inputs.
 func (humanizer *Humanizer) preparePrefixes() {
-	// Save all possible prefixes.
-	humanizer.allPrefixes = append(humanizer.allPrefixes, humanizer.provider.siPrefixes...)
-	humanizer.allPrefixes = append(humanizer.allPrefixes, humanizer.provider.bitPrefixes...)
+	// Save all prefixes into one slice - for convenience.
+	humanizer.allPrefixes = append(humanizer.allPrefixes, siPrefixes...)
+	humanizer.allPrefixes = append(humanizer.allPrefixes, bitPrefixes...)
 	// List of all prefixes as strings.
 	prefixes := make([]string, 0, len(humanizer.allPrefixes))
 	// Append prefixes.
 	for _, prefix := range humanizer.allPrefixes {
+		// Use this loop to also translate the long versions.
+		prefix.long = humanizer.provider.prefixes[prefix.short]
 		prefixes = append(prefixes, prefix.long)
 		prefixes = append(prefixes, prefix.short)
 	}
@@ -46,9 +85,9 @@ func (humanizer *Humanizer) trimZeroes(value string) string {
 
 // Performs the actual prefixing.
 func (humanizer *Humanizer) prefix(value float64, decimals int, threshold int64, short bool, bit bool) string {
-	prefixes := humanizer.provider.siPrefixes
+	prefixes := siPrefixes
 	if bit {
-		prefixes = humanizer.provider.bitPrefixes
+		prefixes = bitPrefixes
 	}
 	if threshold < 10 {
 		threshold = 10
@@ -59,11 +98,12 @@ func (humanizer *Humanizer) prefix(value float64, decimals int, threshold int64,
 	}
 	// Find most appropriate prefix.
 	i := sort.Search(len(prefixes), func(i int) bool {
-		return prefixes[i].multiplier < value
+		return prefixes[i].approxValue < value
 	})
 
+	// For prefixing the approximate value should be enough.
 	convertedValue := humanizer.trimZeroes(
-		strconv.FormatFloat(value/prefixes[i].multiplier, 'f', decimals, 64))
+		strconv.FormatFloat(value/prefixes[i].approxValue, 'f', decimals, 64))
 
 	if short {
 		return convertedValue + prefixes[i].short
@@ -129,7 +169,7 @@ func (humanizer *Humanizer) ParsePrefix(input string) (float64, error) {
 		if prefix.short == matched[3] || prefix.long == matched[3] {
 			result, _ := new(big.Float).Mul(
 				new(big.Float).SetFloat64(number),
-				new(big.Float).SetFloat64(prefix.multiplier)).Float64()
+				new(big.Float).SetFloat64(prefix.approxValue)).Float64()
 			return result, nil
 		}
 	}
