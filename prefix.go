@@ -13,9 +13,8 @@ import (
 
 // Prefixing functions.
 
-const PREC = 64
-
-type Prefix struct {
+// Single prefix definition.
+type prefixDef struct {
 	base        int
 	power       int
 	approxValue float64
@@ -23,7 +22,7 @@ type Prefix struct {
 	long        string
 }
 
-var siPrefixes = []Prefix{
+var siPrefixes = []prefixDef{
 	{10, 24, math.Pow10(24), "Y", "yotta"},
 	{10, 21, math.Pow10(21), "Z", "zetta"},
 	{10, 18, math.Pow10(18), "E", "exa"},
@@ -46,7 +45,7 @@ var siPrefixes = []Prefix{
 	{10, -24, math.Pow10(-24), "y", "yocto"},
 }
 
-var bitPrefixes = []Prefix{
+var bitPrefixes = []prefixDef{
 	{2, 80, math.Pow(2, 80), "Yi", "yobi"},
 	{2, 70, math.Pow(2, 70), "Zi", "zebi"},
 	{2, 60, math.Pow(2, 60), "Ei", "exbi"},
@@ -124,7 +123,7 @@ func (humanizer *Humanizer) prefix(value float64, decimals int, threshold int64,
 	i := sort.Search(len(prefixes), func(i int) bool {
 		return prefixes[i].approxValue < value
 	})
-	if i == len(prefixes) { // Prefix not found.
+	if i == len(prefixes) { // prefixDef not found.
 		return humanizer.trimZeroes(strconv.FormatFloat(value, 'f', decimals, 64))
 	}
 

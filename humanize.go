@@ -15,7 +15,7 @@ type Humanizer struct {
 	printer       *message.Printer
 	timeInputRe   *regexp.Regexp
 	prefixInputRe *regexp.Regexp
-	allPrefixes   []Prefix // Helper slice of all prefixes.
+	allPrefixes   []prefixDef // Helper slice of all prefixes.
 }
 
 // New creates a new humanizer for a given language.
@@ -24,7 +24,7 @@ func New(langName string) (*Humanizer, error) {
 		humanizer := &Humanizer{
 			provider:    provider,
 			printer:     message.NewPrinter(language.MustParse(langName)),
-			allPrefixes: make([]Prefix, len(siPrefixes)+len(bitPrefixes)),
+			allPrefixes: make([]prefixDef, len(siPrefixes)+len(bitPrefixes)),
 		}
 		humanizer.buildTimeInputRe()
 		humanizer.preparePrefixes()
