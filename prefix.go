@@ -124,6 +124,9 @@ func (humanizer *Humanizer) prefix(value float64, decimals int, threshold int64,
 	i := sort.Search(len(prefixes), func(i int) bool {
 		return prefixes[i].approxValue < value
 	})
+	if i == len(prefixes) { // Prefix not found.
+		return humanizer.trimZeroes(strconv.FormatFloat(value, 'f', decimals, 64))
+	}
 
 	// For prefixing the approximate value should be enough.
 	convertedValue := humanizer.trimZeroes(
@@ -136,9 +139,10 @@ func (humanizer *Humanizer) prefix(value float64, decimals int, threshold int64,
 	}
 }
 
-// BitPrefixFast is a convenience wrapper over BitPrefix. See help for PrefixFast.
+// BitPrefixFast is a convenience wrapper over BitPrefix.
+// Precision is 2 decimal place. Will not prefix values smaller than 1024 and will append only the short prefix.
 func (humanizer *Humanizer) BitPrefixFast(value float64) string {
-	return humanizer.BitPrefix(value, 1, 1000, true)
+	return humanizer.BitPrefix(value, 2, 1024, true)
 }
 
 // PrefixFast is a convenience function for easy prefixing with a SI prefix.
@@ -176,10 +180,9 @@ func (humanizer *Humanizer) ParsePrefix(input string) (*big.Float, error) {
 	}
 
 	// Parse first two groups as a float.
-	number, ok := new(big.Float).SetString(matched[1] + "." + matched[2])
-	if !ok { // This can only fail if the regexp is wrong and allows non numbers.
-		return new(big.Float), errors.New("Can't parse the number.")
-	}
+	// This can only fail if the regexp is wrong and allows non numbers.
+	number, _ := new(big.Float).SetString(matched[1] + "." + matched[2])
+
 	// No suffix, no multiplication.
 	if matched[3] == "" {
 		return number, nil

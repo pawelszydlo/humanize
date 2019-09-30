@@ -31,6 +31,10 @@ func TestHumanizer_Prefix(t *testing.T) {
 		"2.8Ki":   humanizer.BitPrefix(2854, 1, 1000, true),
 		"21 tebi": humanizer.BitPrefix(22823452343853, 0, 1000, false),
 		"1.44Mi":  humanizer.BitPrefix(1509949, 2, 1000, true),
+		// Fast bit prefixes.
+		"1001":   humanizer.BitPrefixFast(1001), // Too small.
+		"26.7Mi": humanizer.BitPrefixFast(28000000),
+		"0.01":   humanizer.BitPrefixFast(0.005123), // Prefix not found.
 	}
 
 	for expected, humanized := range cases {
