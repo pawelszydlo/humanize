@@ -56,28 +56,6 @@ var bitPrefixes = []prefixDef{
 	{2, 10, math.Pow(2, 10), "Ki", "kibi"},
 }
 
-func bigPow(x int, y int) *big.Float {
-	one := new(big.Float).SetInt64(1)
-	if y == 0 {
-		return one
-	}
-	bigX := new(big.Float).SetInt64(int64(x))
-	product := new(big.Float).Copy(bigX)
-	// Always calculate positive power, inverse later.
-	isNeg := false
-	if y < 0 {
-		isNeg = true
-		y = -y
-	}
-	for i := int(0); i < y-1; i++ {
-		product = new(big.Float).Mul(product, bigX)
-	}
-	if isNeg {
-		return new(big.Float).Quo(one, product)
-	}
-	return product
-}
-
 // preparePrefixes will build a regular expression to match all possible prefix inputs.
 func (humanizer *Humanizer) preparePrefixes() {
 	// Save all prefixes into one slice - for convenience.
@@ -97,15 +75,6 @@ func (humanizer *Humanizer) preparePrefixes() {
 		`([0-9]+)[.,]?([0-9]*?) ?(` + strings.Join(prefixes, "|") + `)?$`)
 }
 
-// Hack to get rid of trailing zeroes (while keeping the precision if necessary)
-func (humanizer *Humanizer) trimZeroes(value string) string {
-	if strings.ContainsRune(value, '.') {
-		value = strings.TrimRight(value, "0")
-		value = strings.TrimRight(value, ".")
-	}
-	return value
-}
-
 // Performs the actual prefixing.
 func (humanizer *Humanizer) prefix(value float64, decimals int, threshold int64, short bool, bit bool) string {
 	prefixes := siPrefixes
@@ -117,18 +86,18 @@ func (humanizer *Humanizer) prefix(value float64, decimals int, threshold int64,
 	}
 	// If value falls within ignored range then just format it.
 	if value <= float64(threshold) && value >= 10.0/float64(threshold) {
-		return humanizer.trimZeroes(strconv.FormatFloat(value, 'f', decimals, 64))
+		return trimZeroes(strconv.FormatFloat(value, 'f', decimals, 64))
 	}
 	// Find most appropriate prefix.
 	i := sort.Search(len(prefixes), func(i int) bool {
 		return prefixes[i].approxValue < value
 	})
 	if i == len(prefixes) { // prefixDef not found.
-		return humanizer.trimZeroes(strconv.FormatFloat(value, 'f', decimals, 64))
+		return trimZeroes(strconv.FormatFloat(value, 'f', decimals, 64))
 	}
 
 	// For prefixing the approximate value should be enough.
-	convertedValue := humanizer.trimZeroes(
+	convertedValue := trimZeroes(
 		strconv.FormatFloat(value/prefixes[i].approxValue, 'f', decimals, 64))
 
 	if short {
