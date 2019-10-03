@@ -140,11 +140,8 @@ func (humanizer *Humanizer) ParseDuration(input string) (time.Duration, error) {
 		if matched[2] == "" { // Decimal component is empty.
 			matched[2] = "0"
 		}
-		// Parse first two groups into a float.
-		number, err := strconv.ParseFloat(matched[1]+"."+matched[2], 64)
-		if err != nil { // This can only fail if the regexp is wrong and allows non numbers.
-			return time.Duration(0), err
-		}
+		// Parse first two groups into a float. Can only fail if the regexp is wrong and allows non numbers.
+		number, _ := strconv.ParseFloat(matched[1]+"."+matched[2], 64)
 		// Get the value of the unit in seconds.
 		seconds, _ := humanizer.provider.times.units[matched[3]]
 		// Parser will simply sum up all the found durations.

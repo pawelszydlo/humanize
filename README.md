@@ -9,17 +9,17 @@ Easily extendable with new languages.
 Table of contents
 =================
 
-   * [Features](#features)
-      * [Time related operations](#time-related-operations)
-        * [Decoding duration from human input](#decoding-duration-from-human-input)
-        * [Humanized time difference]()
-        * [Pretty print timestamps]()
-      * [Number related operations](#number-related-operations)
-        * [Number humanization]()
-      * [Unit prefixes](#unit-prefixes-metric-and-bit)
-        * [Decoding value from human input]()
-        * [Humanize big numbers with prefixes]()
-   * [TODO](#todo)
+  * [Features](#features)
+    + [Time related operations](#time-related-operations)
+      - [Decoding duration from human input](#decoding-duration-from-human-input-)
+      - [Humanized time difference](#humanized-time-difference-)
+      - [Pretty print timestamps](#pretty-print-timestamps--seconds-only--)
+    + [Number related operations](#number-related-operations)
+      - [Decimal separators](#number-humanization--locale-aware--)
+    + [Unit prefixes](#unit-prefixes--metric-and-bit-)
+      - [Decoding value from human input](#decoding-value-from-human-input-)
+      - [Humanize big numbers with prefixes](#humanize-big-numbers-with-prefixes-)
+  * [TODO](#todo)
 
 ----
 
