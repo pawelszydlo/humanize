@@ -15,45 +15,44 @@ import (
 
 // Single prefix definition.
 type prefixDef struct {
-	base        int
-	power       int
-	approxValue float64
+	value       *big.Float
+	approxValue float64 // For faster comparisons. Is it needed though?
 	short       string
 	long        string
 }
 
 var siPrefixes = []prefixDef{
-	{10, 24, math.Pow10(24), "Y", "yotta"},
-	{10, 21, math.Pow10(21), "Z", "zetta"},
-	{10, 18, math.Pow10(18), "E", "exa"},
-	{10, 15, math.Pow10(15), "P", "peta"},
-	{10, 12, math.Pow10(12), "T", "tera"},
-	{10, 9, math.Pow10(9), "G", "giga"},
-	{10, 6, math.Pow10(6), "M", "mega"},
-	{10, 3, math.Pow10(3), "k", "kilo"},
-	{10, 2, math.Pow10(2), "h", "hecto"},
-	{10, 1, 10, "da", "deca"},
-	{10, -1, math.Pow10(-1), "d", "deci"},
-	{10, -2, math.Pow10(-2), "c", "centi"},
-	{10, -3, math.Pow10(-3), "m", "milli"},
-	{10, -6, math.Pow10(-6), "µ", "micro"},
-	{10, -9, math.Pow10(-9), "n", "nano"},
-	{10, -12, math.Pow10(-12), "p", "pico"},
-	{10, -15, math.Pow10(-15), "f", "femto"},
-	{10, -18, math.Pow10(-18), "a", "atto"},
-	{10, -21, math.Pow10(-21), "z", "zepto"},
-	{10, -24, math.Pow10(-24), "y", "yocto"},
+	{bigPow(10, 24), math.Pow10(24), "Y", "yotta"},
+	{bigPow(10, 21), math.Pow10(21), "Z", "zetta"},
+	{bigPow(10, 18), math.Pow10(18), "E", "exa"},
+	{bigPow(10, 15), math.Pow10(15), "P", "peta"},
+	{bigPow(10, 12), math.Pow10(12), "T", "tera"},
+	{bigPow(10, 9), math.Pow10(9), "G", "giga"},
+	{bigPow(10, 6), math.Pow10(6), "M", "mega"},
+	{bigPow(10, 3), math.Pow10(3), "k", "kilo"},
+	{bigPow(10, 2), math.Pow10(2), "h", "hecto"},
+	{bigPow(10, 1), 10, "da", "deca"},
+	{bigPow(10, -1), math.Pow10(-1), "d", "deci"},
+	{bigPow(10, -2), math.Pow10(-2), "c", "centi"},
+	{bigPow(10, -3), math.Pow10(-3), "m", "milli"},
+	{bigPow(10, -6), math.Pow10(-6), "µ", "micro"},
+	{bigPow(10, -9), math.Pow10(-9), "n", "nano"},
+	{bigPow(10, -12), math.Pow10(-12), "p", "pico"},
+	{bigPow(10, -15), math.Pow10(-15), "f", "femto"},
+	{bigPow(10, -18), math.Pow10(-18), "a", "atto"},
+	{bigPow(10, -21), math.Pow10(-21), "z", "zepto"},
+	{bigPow(10, -24), math.Pow10(-24), "y", "yocto"},
 }
 
 var bitPrefixes = []prefixDef{
-	{2, 80, math.Pow(2, 80), "Yi", "yobi"},
-	{2, 70, math.Pow(2, 70), "Zi", "zebi"},
-	{2, 60, math.Pow(2, 60), "Ei", "exbi"},
-	{2, 50, math.Pow(2, 50), "Pi", "pebi"},
-	{2, 40, math.Pow(2, 40), "Ti", "tebi"},
-	{2, 30, math.Pow(2, 30), "Gi", "gibi"},
-	{2, 20, math.Pow(2, 20), "Mi", "mebi"},
-	{2, 10, math.Pow(2, 10), "Ki", "kibi"},
+	{bigPow(2, 80), math.Pow(2, 80), "Yi", "yobi"},
+	{bigPow(2, 70), math.Pow(2, 70), "Zi", "zebi"},
+	{bigPow(2, 60), math.Pow(2, 60), "Ei", "exbi"},
+	{bigPow(2, 50), math.Pow(2, 50), "Pi", "pebi"},
+	{bigPow(2, 40), math.Pow(2, 40), "Ti", "tebi"},
+	{bigPow(2, 30), math.Pow(2, 30), "Gi", "gibi"},
+	{bigPow(2, 20), math.Pow(2, 20), "Mi", "mebi"},
+	{bigPow(2, 10), math.Pow(2, 10), "Ki", "kibi"},
 }
 
 // preparePrefixes will build a regular expression to match all possible prefix inputs.
@@ -158,7 +157,7 @@ func (humanizer *Humanizer) ParsePrefix(input string) (*big.Float, error) {
 	// Get the multiplier for the prefix.
 	for _, prefix := range humanizer.allPrefixes {
 		if prefix.short == matched[3] || prefix.long == matched[3] {
-			result := new(big.Float).Mul(number, bigPow(prefix.base, prefix.power))
+			result := new(big.Float).Mul(number, prefix.value)
 			return result, nil
 		}
 	}
