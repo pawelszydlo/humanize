@@ -10,6 +10,15 @@ Table of contents
 =================
 
    * [Features](#features)
+      * [Time related operations](#time-related-operations)
+        * [Decoding duration from human input](#decoding-duration-from-human-input)
+        * [Humanized time difference]()
+        * [Pretty print timestamps]()
+      * [Number related operations]()
+        * [Number humanization]()
+      * [Unit prefixes]()
+        * [Decoding value from human input]()
+        * [Humanize big numbers with prefixes]()
    * [TODO](#todo)
 
 ----
@@ -48,7 +57,7 @@ fmt.Println(humanizer.SecondsToTimeString(67))
 fmt.Println(humanizer.HumanizeNumber(1234.567, 2))
 // Prints: 1,234.57
 ```
-### Prefixes (metric and bit)
+### Unit prefixes (metric and bit)
 
 #### Decoding value from human input:
 ```golang
@@ -65,7 +74,7 @@ fmt.Println(value)
 NOTE: ParsePrefix will return a precise value (big.Float), so you might get fractions
 where you wouldn't expect them (e.g. bytes). It's up to you to handle that.
 
-#### Convert big number into something readable:
+#### Humanize big numbers with prefixes:
 ```golang
 // Quick usage.
 fmt.Println(humanizer.SiPrefixFast(174512))
