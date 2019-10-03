@@ -6,18 +6,24 @@ Easily extendable with new languages.
 * English
 * Polish
 
+Table of contents
+=================
+
+   * [Features](#features)
+   * [TODO](#todo)
+
 ----
 
 ## Features
 ### Time related operations
 
-Decoding duration from human input:
+#### Decoding duration from human input:
 ```golang
 duration, _ := humanizer.ParseDuration("2 days, 5 hours and 40 seconds")
 fmt.Println(duration) 
 // Prints: 53h0m40s
 ```
-Humanized time difference:
+#### Humanized time difference:
 ```golang
 firstDate := time.Date(2017, 3, 21, 12, 30, 15, 0, time.UTC)
 secondDate := time.Date(2017, 6, 21, 0, 0, 0, 0, time.UTC)
@@ -30,21 +36,21 @@ fmt.Println(humanizer.TimeDiff(firstDate, secondDate, false))
 fmt.Println(humanizer.TimeDiff(secondDate, firstDate, true))
 // Prints: 3 months, 1 day, 11 hours, 29 minutes and 45 seconds ago
 ```
-Pretty print timestamps (seconds only):
+#### Pretty print timestamps (seconds only):
 ```golang
 fmt.Println(humanizer.SecondsToTimeString(67))
 // Prints: 01:07
 ```
 ### Number related operations
 
-Number humanization (locale aware):
+#### Number humanization (locale aware):
 ```golang
 fmt.Println(humanizer.HumanizeNumber(1234.567, 2))
 // Prints: 1,234.57
 ```
 ### Prefixes (metric and bit)
 
-Decoding value from human input:
+#### Decoding value from human input:
 ```golang
 value, _ := humanizer.ParsePrefix("1.5k")
 fmt.Println(value)
@@ -59,7 +65,7 @@ fmt.Println(value)
 NOTE: ParsePrefix will return a precise value (big.Float), so you might get fractions
 where you wouldn't expect them (e.g. bytes). It's up to you to handle that.
 
-Convert big number into something readable:
+#### Convert big number into something readable:
 ```golang
 // Quick usage.
 fmt.Println(humanizer.SiPrefixFast(174512))
