@@ -9,29 +9,25 @@ Easily extendable with new languages.
 ### Table of contents
 
  - [Features](#features)
-    - [Time related operations](#time-related-operations)
-      - [Decoding duration from human input](#decoding-duration-from-human-input)
-      - [Humanized date difference](#humanized-date-difference)
-      - [Pretty print timestamps](#pretty-print-timestamps)
-    - [Number related operations](#number-related-operations)
-      - [Add decimal separators](#add-decimal-separators)
-    - [Unit prefixes](#unit-prefixes)
-      - [Decoding value from human input](#decoding-value-from-human-input)
-      - [Humanize big numbers with prefixes](#humanize-big-numbers-with-prefixes)
+    - [Decode duration from human input](#decode-duration-from-human-input)
+    - [Humanize date difference](#humanize-date-difference)
+    - [Pretty print timestamps](#pretty-print-timestamps)
+    - [Add decimal separators to numbers](#add-decimal-separators-to-numbers)
+    - [Decode value from human input with a prefix](#decode-value-from-human-input-with-a-prefix)
+    - [Humanize big numbers with prefixes](#humanize-big-numbers-with-prefixes)
   - [TODO](#todo)
 
 ----
 
 ## Features
-### Time related operations
 
-#### Decoding duration from human input
+### Decode duration from human input
 ```golang
 duration, _ := humanizer.ParseDuration("2 days, 5 hours and 40 seconds")
 fmt.Println(duration) 
 // Prints: 53h0m40s
 ```
-#### Humanized date difference
+### Humanize date difference
 ```golang
 firstDate := time.Date(2017, 3, 21, 12, 30, 15, 0, time.UTC)
 secondDate := time.Date(2017, 6, 21, 0, 0, 0, 0, time.UTC)
@@ -46,24 +42,20 @@ Precise mode:
 fmt.Println(humanizer.TimeDiff(secondDate, firstDate, true))
 // Prints: 3 months, 1 day, 11 hours, 29 minutes and 45 seconds ago
 ```
-#### Pretty print timestamps
+### Pretty print timestamps
 ```golang
 fmt.Println(humanizer.SecondsToTimeString(67))
 // Prints: 01:07
 ```
 
-### Number related operations
-
-
-#### Add decimal separators
+### Add decimal separators to numbers
 Uses x/text/number and is locale aware.
 ```golang
 fmt.Println(humanizer.HumanizeNumber(1234.567, 2))
 // Prints: 1,234.57
 ```
-### Unit prefixes
 
-#### Decoding value from human input
+### Decode value from human input with a prefix
 ```golang
 value, _ := humanizer.ParsePrefix("1.5k")
 fmt.Println(value)
@@ -78,7 +70,7 @@ fmt.Println(value)
 NOTE: ParsePrefix will return a precise value (big.Float), so you might get fractions
 where you wouldn't expect them (e.g. bytes). It's up to you to handle that.
 
-#### Humanize big numbers with prefixes
+### Humanize big numbers with prefixes
 Quick usage:
 ```golang
 fmt.Println(humanizer.SiPrefixFast(174512))
