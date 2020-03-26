@@ -2,7 +2,6 @@
 package humanize
 
 import (
-	"errors"
 	"fmt"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
@@ -30,5 +29,5 @@ func New(langName string) (*Humanizer, error) {
 		humanizer.preparePrefixes()
 		return humanizer, nil
 	}
-	return nil, errors.New(fmt.Sprintf("Language not supported: %s", langName))
+	return nil, fmt.Errorf("Language not supported: %s", langName)
 }
