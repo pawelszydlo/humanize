@@ -1,7 +1,6 @@
 package humanize
 
 import (
-	"errors"
 	"fmt"
 	"math"
 	"math/big"
@@ -101,9 +100,8 @@ func (humanizer *Humanizer) prefix(value float64, decimals int, threshold int64,
 
 	if short {
 		return convertedValue + prefixes[i].short
-	} else {
-		return convertedValue + " " + prefixes[i].long
 	}
+	return convertedValue + " " + prefixes[i].long
 }
 
 // BitPrefixFast is a convenience wrapper over BitPrefix.
@@ -112,7 +110,7 @@ func (humanizer *Humanizer) BitPrefixFast(value float64) string {
 	return humanizer.BitPrefix(value, 2, 1024, true)
 }
 
-// PrefixFast is a convenience function for easy prefixing with a SI prefix.
+// SiPrefixFast is a convenience function for easy prefixing with a SI prefix.
 // Precision is 1 decimal place. Will not prefix values in range 0.01 - 1000 and will append only the short prefix.
 func (humanizer *Humanizer) SiPrefixFast(value float64) string {
 	return humanizer.SiPrefix(value, 1, 1000, true)
@@ -143,7 +141,7 @@ func (humanizer *Humanizer) ParsePrefix(input string) (*big.Float, error) {
 	matched := humanizer.prefixInputRe.FindStringSubmatch(strings.TrimSpace(input))
 	// 0 - full match, 1 - number, 2 - decimal, 3 - suffix
 	if len(matched) != 4 {
-		return new(big.Float), errors.New(fmt.Sprintf("Cannot parse '%s'.", input))
+		return new(big.Float), fmt.Errorf("Cannot parse '%s'.", input)
 	}
 
 	// Parse first two groups as a float.
@@ -163,5 +161,5 @@ func (humanizer *Humanizer) ParsePrefix(input string) (*big.Float, error) {
 	}
 
 	// No prefix was found. This should never happen as the regexp covers all units.
-	return new(big.Float), errors.New(fmt.Sprintf("Can't match prefix for '%s'.", matched[3]))
+	return new(big.Float), fmt.Errorf("Can't match prefix for '%s'.", matched[3])
 }

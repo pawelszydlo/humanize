@@ -29,7 +29,6 @@ func New(langName string) (*Humanizer, error) {
 		humanizer.buildTimeInputRe()
 		humanizer.preparePrefixes()
 		return humanizer, nil
-	} else {
-		return nil, errors.New(fmt.Sprintf("Language not supported: %s", langName))
 	}
+	return nil, errors.New(fmt.Sprintf("Language not supported: %s", langName))
 }

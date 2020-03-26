@@ -1,7 +1,7 @@
 package humanize
 
 // English l10n. For description see lang_structs.go.
-var lang_en = languageProvider{
+var langEn = languageProvider{
 	times: times{
 		ranges: []timeRanges{
 			{Minute, 1, false, 0, "1 second", []timeRange{

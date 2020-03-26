@@ -4,8 +4,8 @@ package humanize
 
 // List all the existing language providers here.
 var languages = map[string]languageProvider{
-	"pl": lang_pl,
-	"en": lang_en,
+	"pl": langPl,
+	"en": langEn,
 }
 
 // languageProvider is a struct defining all the needed language elements.

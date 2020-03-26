@@ -3,7 +3,6 @@ package humanize
 // Time values humanization functions.
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 	"sort"
@@ -86,14 +85,14 @@ func (humanizer *Humanizer) humanizeDuration(seconds int64, precise bool) string
 
 	if len(humanized) == 1 {
 		return humanized[0]
-	} else {
-		return fmt.Sprintf(
-			"%s %s %s",
-			strings.Join(humanized[:len(humanized)-1], ", "),
-			humanizer.provider.times.remainderSep,
-			humanized[len(humanized)-1],
-		)
 	}
+	return fmt.Sprintf(
+		"%s %s %s",
+		strings.Join(humanized[:len(humanized)-1], ", "),
+		humanizer.provider.times.remainderSep,
+		humanized[len(humanized)-1],
+	)
+
 }
 
 // TimeDiffNow is a convenience method returning humanized time from now till date.
@@ -131,7 +130,7 @@ func (humanizer *Humanizer) TimeDiff(startDate, endDate time.Time, precise bool)
 func (humanizer *Humanizer) ParseDuration(input string) (time.Duration, error) {
 	allMatched := humanizer.timeInputRe.FindAllStringSubmatch(input, -1)
 	if len(allMatched) == 0 {
-		return time.Duration(0), errors.New(fmt.Sprintf("Cannot parse '%s'.", input))
+		return time.Duration(0), fmt.Errorf("Cannot parse '%s'.", input)
 	}
 
 	totalDuration := time.Duration(0)
