@@ -15,6 +15,7 @@ Easily extendable with new languages.
     - [Add decimal separators to numbers](#add-decimal-separators-to-numbers)
     - [Decode value from human input with a prefix](#decode-value-from-human-input-with-a-prefix)
     - [Humanize big numbers with prefixes](#humanize-big-numbers-with-prefixes)
+    - [Humanize parts of one](#humanize-parts-of-one)
   - [TODO](#todo)
 
 ----
@@ -86,6 +87,21 @@ Using bit prefixes instead of metric:
 fmt.Println(humanizer.BitPrefixFast(1509949))
 // Prints: 1.44Mi
 ```
+
+### Humanize parts of one
+Avoid leading zeroes:
+```golang
+fmt.Println(humanizer.HumanizeParts(0.25, 0))
+// Prints: 25%
+fmt.Println(humanizer.HumanizeParts(0.0023, 0))
+// Prints: 2‰
+```
+Allow leading zeroes to avoid jumping to a smaller unit:
+```golang
+fmt.Println(humanizer.HumanizeParts(0.0023, 1))
+// Prints: 0.23%
+```
+
 ----
 
 ## TODO
