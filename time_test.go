@@ -175,6 +175,8 @@ func TestHumanizer_ParseDuration(t *testing.T) {
 			"2 days and 5 hours":     time.Duration(2*Day*time.Second + 5*Hour*time.Second),
 			"2 years, 19 months":     time.Duration(2*Year*time.Second + 19*Month*time.Second),
 			"2 days and then 2 days": time.Duration(4 * Day * time.Second),
+			"-2 days":                time.Duration(-2 * Day * time.Second),
+			"-2 months and 10 days":  time.Duration(-2*Month*time.Second - 10*Day*time.Second),
 		},
 		"pl": {
 			"3 minuty":              time.Duration(3 * Minute * time.Second),
