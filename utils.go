@@ -21,7 +21,7 @@ func bigPow(x int, y int) *big.Float {
 		isNeg = true
 		y = -y
 	}
-	for i := int(0); i < y-1; i++ {
+	for i := 0; i < y-1; i++ {
 		product = new(big.Float).Mul(product, bigX)
 	}
 	if isNeg {

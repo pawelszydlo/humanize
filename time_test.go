@@ -220,6 +220,36 @@ func TestHumanizer_ParseDuration_Incorrect(t *testing.T) {
 	}
 }
 
+func TestHumanizer_humanizeDuration(t *testing.T) {
+	humanizer, err := New("en")
+	if err != nil {
+		t.Fatalf("Humanizer creation failed with error: %s", err)
+	}
+
+	cases := []struct {
+		seconds  int64
+		precise  bool
+		expected string
+	}{
+		{0, false, "now"},
+		{0, true, "now"},
+		{1, false, "1 second"},
+		{-1, false, "1 second"},
+		{-60, false, "1 minute"},
+		{-3600, false, "1 hour"},
+		{-90, false, "1 minute"},
+		{-90, true, "1 minute and 30 seconds"},
+		{90, true, "1 minute and 30 seconds"},
+	}
+
+	for _, tc := range cases {
+		humanized := humanizer.humanizeDuration(tc.seconds, tc.precise)
+		if humanized != tc.expected {
+			t.Errorf("humanizeDuration(%d, %v): expected %q, got %q", tc.seconds, tc.precise, tc.expected, humanized)
+		}
+	}
+}
+
 func TestHumanizer_SecondsToTimeString(t *testing.T) {
 	humanizer, err := New("en")
 	if err != nil {

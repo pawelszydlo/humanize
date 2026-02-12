@@ -36,11 +36,14 @@ func (humanizer *Humanizer) buildTimeInputRe() {
 
 // humanizeDuration will return a humanized form of time duration.
 func (humanizer *Humanizer) humanizeDuration(seconds int64, precise bool) string {
-	if seconds < 1 {
+	if seconds == 0 {
 		return humanizer.provider.times.now
 	}
 	secondsLeft := seconds
-	humanized := []string{}
+	if secondsLeft < 0 {
+		secondsLeft = -secondsLeft
+	}
+	var humanized []string
 
 	for secondsLeft > 0 {
 		// Within all the ranges, find the one matching our time best (closest, but bigger).
@@ -130,7 +133,7 @@ func (humanizer *Humanizer) TimeDiff(startDate, endDate time.Time, precise bool)
 func (humanizer *Humanizer) ParseDuration(input string) (time.Duration, error) {
 	allMatched := humanizer.timeInputRe.FindAllStringSubmatch(input, -1)
 	if len(allMatched) == 0 {
-		return time.Duration(0), fmt.Errorf("Cannot parse '%s'.", input)
+		return time.Duration(0), fmt.Errorf("cannot parse %q", input)
 	}
 
 	totalDuration := time.Duration(0)

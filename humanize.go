@@ -29,5 +29,5 @@ func New(langName string) (*Humanizer, error) {
 		humanizer.preparePrefixes()
 		return humanizer, nil
 	}
-	return nil, fmt.Errorf("Language not supported: %s", langName)
+	return nil, fmt.Errorf("language not supported: %s", langName)
 }

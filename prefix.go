@@ -62,11 +62,11 @@ func (humanizer *Humanizer) preparePrefixes() {
 	// List of all prefixes as strings.
 	prefixes := make([]string, 0, len(humanizer.allPrefixes))
 	// Append prefixes.
-	for _, prefix := range humanizer.allPrefixes {
+	for i := range humanizer.allPrefixes {
 		// Use this loop to also translate the long versions.
-		prefix.long = humanizer.provider.prefixes[prefix.short]
-		prefixes = append(prefixes, prefix.long)
-		prefixes = append(prefixes, prefix.short)
+		humanizer.allPrefixes[i].long = humanizer.provider.prefixes[humanizer.allPrefixes[i].short]
+		prefixes = append(prefixes, humanizer.allPrefixes[i].long)
+		prefixes = append(prefixes, humanizer.allPrefixes[i].short)
 	}
 	// Regexp will match: number, optional coma or dot, optional second number, optional space, optional suffix.
 	humanizer.prefixInputRe = regexp.MustCompile(
@@ -141,7 +141,7 @@ func (humanizer *Humanizer) ParsePrefix(input string) (*big.Float, error) {
 	matched := humanizer.prefixInputRe.FindStringSubmatch(strings.TrimSpace(input))
 	// 0 - full match, 1 - number, 2 - decimal, 3 - suffix
 	if len(matched) != 4 {
-		return new(big.Float), fmt.Errorf("Cannot parse '%s'.", input)
+		return new(big.Float), fmt.Errorf("cannot parse %q", input)
 	}
 
 	// Parse first two groups as a float.
@@ -161,5 +161,5 @@ func (humanizer *Humanizer) ParsePrefix(input string) (*big.Float, error) {
 	}
 
 	// No prefix was found. This should never happen as the regexp covers all units.
-	return new(big.Float), fmt.Errorf("Can't match prefix for '%s'.", matched[3])
+	return new(big.Float), fmt.Errorf("can't match prefix for %q", matched[3])
 }
